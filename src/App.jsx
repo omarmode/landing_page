@@ -1,48 +1,46 @@
+// App.jsx
 import React, { useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline, Button, Typography, Container, Switch } from '@mui/material';
+import { CssBaseline, Container, Switch, Typography } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Navbar from './components/Navbar'; 
+import Home from './pages/Home';
+import About from './pages/About';
+// import Rewards from './pages/Rewards';
+// import FAQ from './pages/FAQ';
+// import APIPage from './pages/APIPage';
+// import DownloadApp from './pages/DownloadApp';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
 
-  // إنشاء الثيم بناءً على الوضع الحالي
   const theme = createTheme({
     palette: {
-      mode: darkMode ? 'dark' : 'light', // التحكم في الوضع
-      primary: {
-        main: '#1d4ed8',
-      },
-      secondary: {
-        main: '#9333ea',
-      },
+      mode: darkMode ? 'dark' : 'light',
+      primary: { main: '#1d4ed8' },
+      secondary: { main: '#9333ea' },
     },
-    typography: {
-      fontFamily: 'Arial, sans-serif',
-    },
+    typography: { fontFamily: 'Arial, sans-serif' },
   });
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container maxWidth="sm" style={{ textAlign: 'center', marginTop: '2rem' }}>
-        <Typography variant="h4" gutterBottom>
-          Welcome to MUI
-        </Typography>
-        <Typography variant="body1" paragraph>
-          Switch between Dark and Light modes using the toggle below!
-        </Typography>
-        <Switch
-          checked={darkMode}
-          onChange={() => setDarkMode(!darkMode)}
-          color="primary"
-        />
-        <Typography variant="body2" paragraph>
-          {darkMode ? 'Dark Mode Enabled' : 'Light Mode Enabled'}
-        </Typography>
-        <Button variant="contained" color="primary" size="large">
-          Get Started
-        </Button>
-      </Container>
+      <Router>
+        {/* الناف بار */}
+        <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+        {/* المحتوى */}
+        <Container maxWidth="lg" style={{ marginTop: '2rem' }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            {/* <Route path="/rewards" element={<Rewards />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/api" element={<APIPage />} />
+            <Route path="/download" element={<DownloadApp />} /> */}
+          </Routes>
+        </Container>
+      </Router>
     </ThemeProvider>
   );
 }
