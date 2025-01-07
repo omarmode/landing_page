@@ -1,7 +1,6 @@
-// App.jsx
 import React, { useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline, Container, Switch, Typography } from '@mui/material';
+import { CssBaseline, Switch, Typography } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Navbar from './components/Navbar'; 
 import Home from './pages/Home';
@@ -27,19 +26,20 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        {/* الناف بار */}
-        <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
-        {/* المحتوى */}
-        <Container maxWidth="lg" style={{ marginTop: '2rem' }}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            {/* <Route path="/rewards" element={<Rewards />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/api" element={<APIPage />} />
-            <Route path="/download" element={<DownloadApp />} /> */}
-          </Routes>
-        </Container>
+       
+        <div className="shared-background">
+          <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+          <Home />
+        </div>
+
+        
+        <Routes>
+          <Route path="/about" element={<About />} />
+          {/* <Route path="/rewards" element={<Rewards />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/api" element={<APIPage />} />
+          <Route path="/download" element={<DownloadApp />} /> */}
+        </Routes>
       </Router>
     </ThemeProvider>
   );

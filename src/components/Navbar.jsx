@@ -1,27 +1,40 @@
 // Navbar.jsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 function Navbar({ darkMode, setDarkMode }) {
+  const [language, setLanguage] = useState('EN');
+
+  const toggleLanguage = () => {
+    setLanguage((prevLang) => (prevLang === 'EN' ? 'Ar' : 'En'));
+  };
     useEffect(() => {
         const isDarkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
         setDarkMode(isDarkModePreferred); 
       }, [setDarkMode]);
   return (
     <AppBar
-      position="static"
-      sx={{
-        backgroundColor: darkMode ? 'var(--primary-bg, #00040F)' : 'var(--primary-bg, #FFF)', 
-        color: darkMode ? '#ffffff' : '#000000',
-        direction: 'rtl', 
-        padding: '0 16px', 
-      }}
-    >
+    sx={{
+      background: darkMode ? 'var(--primary-bg, #00040F)' : 'var(--primary-bg, #FFF)', // الخلفية الداكنة أو الفاتحة
+      boxShadow: '0px 10px 20px 0px rgba(0, 0, 0, 0.12)', // الظلال حسب التصميم
+      width: '100%', 
+      margin: '0',
+      color: darkMode ? '#ffffff' : '#000000',
+      direction: 'rtl',
+      padding: '0 16px',
+      zIndex: 1300,
+      borderRadius: '0', // إزالة الحواف الدائرية ليصبح مطابقًا للتصميم
+    }}
+  >
+  
+  
+  
+  
       <Toolbar>
-        {/* الشعار (أقصى اليمين) */}
+        
         <Box sx={{ marginLeft: '50px' }} >
           <div style={{ cursor: 'pointer', display: 'inline-block' }}>
           <svg width="72" height="26" viewBox="0 0 72 26" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -46,7 +59,7 @@ function Navbar({ darkMode, setDarkMode }) {
         </Box>
 
         {/* الروابط (في المنتصف) */}
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', gap: '20px' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', gap: '30px' }}>
   {/* الروابط */}
   <Typography
     variant="body1"
@@ -56,7 +69,7 @@ function Navbar({ darkMode, setDarkMode }) {
       textDecoration: 'none',
       color: 'inherit',
       fontWeight: 'bold',
-      '&:hover': { textDecoration: 'underline' },
+      '&:hover': { textDecoration: 'none' },
     }}
   >
     الرئيسية
@@ -69,7 +82,7 @@ function Navbar({ darkMode, setDarkMode }) {
       textDecoration: 'none',
       color: 'inherit',
       fontWeight: 'bold',
-      '&:hover': { textDecoration: 'underline' },
+      '&:hover': { textDecoration: 'none' },
     }}
   >
     عنّا
@@ -82,7 +95,7 @@ function Navbar({ darkMode, setDarkMode }) {
       textDecoration: 'none',
       color: 'inherit',
       fontWeight: 'bold',
-      '&:hover': { textDecoration: 'underline' },
+      '&:hover': { textDecoration: 'none' },
     }}
   >
     لماذا نحن
@@ -95,7 +108,7 @@ function Navbar({ darkMode, setDarkMode }) {
       textDecoration: 'none',
       color: 'inherit',
       fontWeight: 'bold',
-      '&:hover': { textDecoration: 'underline' },
+      '&:hover': { textDecoration: 'none' },
     }}
   >
     نظام المكافآت
@@ -108,7 +121,7 @@ function Navbar({ darkMode, setDarkMode }) {
       textDecoration: 'none',
       color: 'inherit',
       fontWeight: 'bold',
-      '&:hover': { textDecoration: 'underline' },
+      '&:hover': { textDecoration: 'none' },
     }}
   >
     تحميل التطبيق
@@ -121,7 +134,7 @@ function Navbar({ darkMode, setDarkMode }) {
       textDecoration: 'none',
       color: 'inherit',
       fontWeight: 'bold',
-      '&:hover': { textDecoration: 'underline' },
+      '&:hover': { textDecoration: 'none' },
     }}
   >
     API
@@ -134,7 +147,7 @@ function Navbar({ darkMode, setDarkMode }) {
       textDecoration: 'none',
       color: 'inherit',
       fontWeight: 'bold',
-      '&:hover': { textDecoration: 'underline' },
+      '&:hover': { textDecoration: 'none' },
     }}
   >
     FAQ
@@ -142,14 +155,36 @@ function Navbar({ darkMode, setDarkMode }) {
 </Box>
 
 
-<Box sx={{ display: 'flex', alignItems: 'center', gap: '10px', marginRight: 'auto' }}>
+<Box sx={{ display: 'flex', alignItems: 'center', gap: '25px', marginRight: 'auto' }}>
+<IconButton
+      edge="end"
+      color="inherit"
+      onClick={toggleLanguage}
+      sx={{
+        backgroundColor: '#170B23', 
+        borderRadius: '50%', 
+        padding: '10px',
+      }}
+    >
+      <Typography
+        variant="body2"
+        sx={{
+          color: '#FFFFFF', 
+          fontWeight: 'bold', 
+          fontSize: '14px',
+        }}
+      >
+        {language}
+      </Typography>
+    </IconButton>
+
 <IconButton
   edge="end"
   color="inherit"
   onClick={() => setDarkMode(!darkMode)}
   sx={{
-    backgroundColor: darkMode ? '#722ED1' : '#4B6A9B', // لون الدائرة حسب الوضع
-    borderRadius: '50%', // شكل دائري
+    backgroundColor: darkMode ? '#722ED1' : '#4B6A9B', 
+    borderRadius: '50%', 
     padding: '8px', // حشو داخلي مناسب
   }}
 >
@@ -171,19 +206,26 @@ function Navbar({ darkMode, setDarkMode }) {
 </IconButton>
 
 
-  <button
+<button
   style={{
-    background: 'var(--primary-pink, #FF2A66)', // الخلفية مع اللون الافتراضي
-    color: '#FFFFFF', // لون النص
+    background: 'var(--primary-pink, #FF2A66)', // الخلفية
+    color: 'var(--general-btn-text, #FFF)', // لون النص
     border: 'none', // إزالة الحدود
-    padding: '8px 16px', // الحشو الداخلي
-    borderRadius: '30px', // جعل الحواف مستديرة حسب الطلب
-    fontWeight: 'bold', // النص عريض
-    cursor: 'pointer', // إظهار مؤشر اليد عند التمرير
+    padding: '15px 20px', // الحشو الداخلي
+    borderRadius: '30px', // الحواف الدائرية
+    fontWeight: 700, // وزن الخط الغامق
+    fontFamily: 'Tajawal, sans-serif', // نوع الخط
+    fontSize: '16px', // حجم الخط
+    lineHeight: '22px', 
+    textAlign: 'center',
+    cursor: 'pointer', // مؤشر اليد عند التمرير
+    width: '135px', // عرض الزر
+    height: '48px', // ارتفاع الزر
   }}
 >
   ابدأ الآن معنا!
 </button>
+
 
 </Box>
 
