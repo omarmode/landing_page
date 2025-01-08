@@ -1,25 +1,74 @@
 import React from 'react';
-import './SecondSection.css'; // ملف CSS خاص بالمكون
+import { motion } from 'framer-motion';
+import './SecondSection.css';
+
+const images = [
+  '/Rectangle.png',
+  '/Rectangle2.png',
+  '/Rectangle3.png',
+];
 
 function SecondSection() {
   return (
     <div className="second-section">
-      {/* القسم الأيسر للصور */}
-      <div className="images-section">
-        <div className="images-grid">
-          {/* استبدل هذه الصور بالصور المطلوبة */}
-          {[...Array(9)].map((_, index) => (
+      {/* الصف الثابت (الآن هو الصف الأول) */}
+      <div className="static-column">
+        <img
+          src={images[0]}
+          alt="large-image"
+          className="large-image"
+        />
+        <div className="small-images-row">
+          <img
+            src={images[1]}
+            alt="small-image-1"
+            className="small-image"
+          />
+          <img
+            src={images[2]}
+            alt="small-image-2"
+            className="small-image"
+          />
+        </div>
+      </div>
+
+      {/* الصف المتحرك الأول */}
+      <div className="marquee-container">
+        <motion.div
+          className="marquee"
+          animate={{ y: ['0%', '-50%'] }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
+        >
+          {images.concat(images).map((src, index) => (
             <img
               key={index}
-              src={`https://via.placeholder.com/150?text=Image+${index + 1}`} // صورة وهمية
+              src={src}
               alt={`image-${index + 1}`}
               className="grid-image"
             />
           ))}
-        </div>
+        </motion.div>
       </div>
 
-      {/* القسم الأيمن للنصوص */}
+      {/* الصف المتحرك الثاني */}
+      <div className="marquee-container">
+        <motion.div
+          className="marquee"
+          animate={{ y: ['-50%', '0%'] }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
+        >
+          {images.concat(images).map((src, index) => (
+            <img
+              key={index + 100}
+              src={src}
+              alt={`image-${index + 1}-row2`}
+              className="grid-image"
+            />
+          ))}
+        </motion.div>
+      </div>
+
+      {/* قسم النصوص */}
       <div className="text-section">
         <h2>مرحباً بك في OKpin!</h2>
         <p>

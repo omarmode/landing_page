@@ -3,6 +3,7 @@ import React from 'react';
 import { Typography, Button } from '@mui/material';
 import './Home.css'; 
 import SecondSection from './SecondSection';
+import ThirdSection from './ThirdSection';
 
 function Home() {
   return (
@@ -82,6 +83,7 @@ function Home() {
 </div>
     </div>
 <SecondSection />
+<ThirdSection/>
     </>
   );
 }
