@@ -16,11 +16,18 @@ function App() {
   const theme = createTheme({
     palette: {
       mode: darkMode ? 'dark' : 'light',
+      ...(darkMode && {
+        background: {
+          default: '#00040F', // لون الخلفية الرئيسي في الوضع المظلم
+          paper: '#00040F',   // لون الخلفية للعناصر الورقية مثل البطاقات
+        },
+      }),
       primary: { main: '#1d4ed8' },
       secondary: { main: '#9333ea' },
     },
     typography: { fontFamily: 'Arial, sans-serif' },
   });
+  
 
   return (
     <ThemeProvider theme={theme}>
@@ -35,10 +42,7 @@ function App() {
         
         <Routes>
           <Route path="/about" element={<About />} />
-          {/* <Route path="/rewards" element={<Rewards />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/api" element={<APIPage />} />
-          <Route path="/download" element={<DownloadApp />} /> */}
+          
         </Routes>
       </Router>
     </ThemeProvider>

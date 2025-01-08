@@ -4,6 +4,7 @@ import { Typography, Button } from '@mui/material';
 import './Home.css'; 
 import SecondSection from './SecondSection';
 import ThirdSection from './ThirdSection';
+import FourdSection from './FourdSection';
 
 function Home() {
   return (
@@ -84,6 +85,7 @@ function Home() {
     </div>
 <SecondSection />
 <ThirdSection/>
+<FourdSection/>
     </>
   );
 }
