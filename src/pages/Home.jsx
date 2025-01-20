@@ -10,6 +10,7 @@ import NewPage from './NewPage';
 import StyledPage from './StyledPage';
 import AccordionPage from './AccordionPage';
 import FeatureSection from './FeatureSection';
+import Footer from './Footer';
 
 function Home() {
   return (
@@ -96,6 +97,7 @@ function Home() {
 <StyledPage/>
 <AccordionPage />
 <FeatureSection/>
+<Footer/>
     </>
   );
 }
