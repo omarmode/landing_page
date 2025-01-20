@@ -22,13 +22,13 @@
   .card {
     flex: 1;
     max-width: 23%;
-    width: 244px;
+    width: 120px;
     border-radius: 40px;
     background-color: #13131a;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease-in-out;
     text-align: center;
-    height: 244px;
+    height: 240px;
     display: flex;
     flex-direction: column;
     justify-content: space-between; /* لضمان توزيع المحتوى بشكل صحيح */
@@ -49,11 +49,11 @@
     align-items: center;
     /* overflow: hidden; */
   }
-  .card:nth-child(even) .card-header {
+  .card:nth-child(odd) .card-header {
     order: 2; 
     border-radius: 0 0 40px 40px;
   }
-  .card:nth-child(even) .icon-circle {
+  .card:nth-child(odd) .icon-circle {
     top: -30px; /* رفع الأيقونة للأعلى عند وجود الخلفية في الأسفل */
   }
   

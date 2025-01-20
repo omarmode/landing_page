@@ -16,9 +16,9 @@ function ThirdSection() {
 
   return (
     <div className="third-section">
-      <h2 className="section-title">لماذا OKpin!? </h2>
+      <h2 className="section-title"> !؟ OKpin لماذا </h2>
       <div className="cards-container">
-        {cards.map((card, index) => (
+        {cards.slice().reverse().map((card, index) => (
           <motion.div
             key={card.id}
             className="card"

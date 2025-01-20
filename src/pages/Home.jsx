@@ -5,6 +5,11 @@ import './Home.css';
 import SecondSection from './SecondSection';
 import ThirdSection from './ThirdSection';
 import FourdSection from './FourdSection';
+import StepsPage from './StepsPage';
+import NewPage from './NewPage';
+import StyledPage from './StyledPage';
+import AccordionPage from './AccordionPage';
+import FeatureSection from './FeatureSection';
 
 function Home() {
   return (
@@ -55,15 +60,15 @@ function Home() {
     borderRadius: '24px',
     background: 'linear-gradient(67deg, #E9BA00 -24.26%, #FF2A66 41.56%)',
     color: '#ffffff', // لون النص
-    fontSize: '16px',
+    fontSize: '12px',
     fontWeight: 700,
     textTransform: 'none', 
     '&:hover': {
-      background: 'linear-gradient(67deg, #E9BA00 -10%, #FF2A66 50%)', // تأثير التدرج عند التمرير
+      background: 'linear-gradient(67deg, #E9BA00 -10%, #FF2A66 50%)', 
     }
   }}
 >
-  ابدأ الآن معنا!
+!ابدأ الآن معنا
 </Button>
 <div className="svg-divider">
   {[...Array(10)].map((_, index) => (
@@ -86,6 +91,11 @@ function Home() {
 <SecondSection />
 <ThirdSection/>
 <FourdSection/>
+<StepsPage/>
+<NewPage />
+<StyledPage/>
+<AccordionPage />
+<FeatureSection/>
     </>
   );
 }
