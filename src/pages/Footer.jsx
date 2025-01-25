@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, Grid, Link, IconButton, Button } from '@mui/material';
 import Whatsappicon from './icons/Whatsappicon';
 import Telegram from './icons/Telegram';
@@ -6,8 +6,13 @@ import Twitter from './icons/Twitter';
 import Facebook from './icons/Facebook';
 import Apple from './icons/Apple';
 import Appstore from './icons/Appstore';
+import ControlPanelModal from './ControlPanelModal';
 
 const Footer = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
   return (
     <Box sx={{ backgroundColor: '#00040F', color: 'white', padding: '40px 20px' }}>
       <Grid container spacing={4} justifyContent="space-between" alignItems="flex-start">
@@ -23,7 +28,7 @@ const Footer = () => {
     display: 'flex',
     gap: '8px', // مسافة صغيرة بين الزرين
     justifyContent: 'center', // محاذاة الزرين في الوسط
-    marginTop: '8px', // مسافة صغيرة بين العنوان والزرين
+    marginTop: '8px', 
   }}
 >
   {/* الزر الأول (Google Play) */}
@@ -32,7 +37,7 @@ const Footer = () => {
     sx={{
       backgroundColor: '#000000',
       color: '#FFFFFF',
-      width: '120px', // حجم أصغر
+      width: '100px', // حجم أصغر
       height: '50px', // تقليل الارتفاع
       textTransform: 'none',
       padding: '6px',
@@ -63,7 +68,7 @@ const Footer = () => {
         gap: '4px',
       }}
     >
-      <Appstore sx={{ fontSize: '14px' }} /> {/* الأيقونة على اليسار */}
+      <Appstore /> {/* الأيقونة على اليسار */}
       <Typography
         variant="body2"
         sx={{
@@ -152,7 +157,35 @@ const Footer = () => {
           </Box>
         </Grid>
 
-        {/* العمود الثالث (روابط الوصول السريع) */}
+        
+
+        {/* العمود الرابع (سياسات المنصة) */}
+        <Grid item xs={12} md={3}>
+          <Typography variant="h6" sx={{ marginBottom: '16px', fontWeight: 'bold' }}>
+            سياسات المنصة
+          </Typography>
+          <Box>
+          <Link
+  href="/privacy-policy"
+  color="inherit"
+  underline="none"
+  display="block"
+  sx={{ marginBottom: '8px' }}
+>
+  سياسة الخصوصية
+</Link>
+            <Link href="#" color="inherit" underline="none" display="block" sx={{ marginBottom: '8px' }}>
+              شروط الاستخدام
+            </Link>
+            <Link href="#" color="inherit" underline="none" display="block" sx={{ marginBottom: '8px' }}>
+              خدمة API
+            </Link>
+            <Link href="#" color="inherit" underline="none" display="block">
+              عن OKpin
+            </Link>
+          </Box>
+        </Grid>
+           {/* العمود الثالث (روابط الوصول السريع) */}
         <Grid item xs={12} md={3}>
           <Typography variant="h6" sx={{ marginBottom: '16px', fontWeight: 'bold' }}>
             روابط الوصول السريع
@@ -167,33 +200,23 @@ const Footer = () => {
             <Link href="#" color="inherit" underline="none" display="block" sx={{ marginBottom: '8px' }}>
               الأسئلة الشائعة FAQ
             </Link>
-            <Link href="#" color="inherit" underline="none" display="block">
-              لوحة التحكم
-            </Link>
+            <Link
+        href="#"
+        color="inherit"
+        underline="none"
+        display="block"
+        sx={{ marginBottom: '8px' }}
+        onClick={handleOpenModal}
+      >
+        لوحة التحكم
+      </Link>
+            <ControlPanelModal
+        isOpen={isModalOpen}
+        handleClose={handleCloseModal}
+        theme="dark" // استخدم "dark" أو "light"
+      />
           </Box>
         </Grid>
-
-        {/* العمود الرابع (سياسات المنصة) */}
-        <Grid item xs={12} md={3}>
-          <Typography variant="h6" sx={{ marginBottom: '16px', fontWeight: 'bold' }}>
-            سياسات المنصة
-          </Typography>
-          <Box>
-            <Link href="#" color="inherit" underline="none" display="block" sx={{ marginBottom: '8px' }}>
-              سياسة الخصوصية
-            </Link>
-            <Link href="#" color="inherit" underline="none" display="block" sx={{ marginBottom: '8px' }}>
-              شروط الاستخدام
-            </Link>
-            <Link href="#" color="inherit" underline="none" display="block" sx={{ marginBottom: '8px' }}>
-              خدمة API
-            </Link>
-            <Link href="#" color="inherit" underline="none" display="block">
-              عن OKpin
-            </Link>
-          </Box>
-        </Grid>
-
       </Grid>
 
       {/* حقوق النشر */}
