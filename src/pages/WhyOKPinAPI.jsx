@@ -3,7 +3,7 @@ import { Box, TextField, Button, Typography } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 
 
-const WhyUs = ({ darkMode }) => {
+const WhyOKPinAPI = ({ darkMode }) => {
   // الحالة الخاصة بالأزرار النشطة
   const [activeCard, setActiveCard] = useState("First Card");
 
@@ -257,4 +257,4 @@ const WhyUs = ({ darkMode }) => {
   );
 };
 
-export default WhyUs;
+export default WhyOKPinAPI;

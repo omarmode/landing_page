@@ -11,14 +11,11 @@ function Navbar({ darkMode, setDarkMode }) {
   const toggleLanguage = () => {
     setLanguage((prevLang) => (prevLang === 'EN' ? 'Ar' : 'En'));
   };
-    useEffect(() => {
-        const isDarkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        setDarkMode(isDarkModePreferred); 
-      }, [setDarkMode]);
+    
   return (
     <AppBar
     sx={{
-      background: darkMode ? 'var(--primary-bg, #00040F)' : 'var(--primary-bg, #FFF)', // الخلفية الداكنة أو الفاتحة
+      background: darkMode ? '#00040F' : '#FFF', 
       boxShadow: '0px 10px 20px 0px rgba(0, 0, 0, 0.12)', // الظلال حسب التصميم
       width: '100%', 
       margin: '0',
@@ -77,7 +74,7 @@ function Navbar({ darkMode, setDarkMode }) {
   <Typography
     variant="body1"
     component={Link}
-    to="/about"
+    to="/about-us"
     sx={{
       textDecoration: 'none',
       color: 'inherit',
@@ -181,7 +178,7 @@ function Navbar({ darkMode, setDarkMode }) {
 <IconButton
   edge="end"
   color="inherit"
-  onClick={() => setDarkMode(!darkMode)}
+  onClick={() => setDarkMode((prev) => !prev)}
   sx={{
     backgroundColor: darkMode ? '#722ED1' : '#4B6A9B', 
     borderRadius: '50%', 

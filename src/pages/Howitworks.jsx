@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import API from "./icons/API";
 
 
-const WhyUs = ({ darkMode }) => {
+const Howitworks = ({ darkMode }) => {
   // الحالة الخاصة بالأزرار النشطة
   const [activeCard, setActiveCard] = useState("First Card");
 
@@ -22,9 +23,9 @@ const WhyUs = ({ darkMode }) => {
     >
       {/* العنوان */}
       <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-        <HomeIcon sx={{ color: "#FF2A66", fontSize: "24px", mr: 1 }} />
+        <API/>
         <Typography variant="h6" component="h1">
-          Landing Page / Hero Section
+          Api Page / How it works
         </Typography>
       </Box>
 
@@ -257,4 +258,4 @@ const WhyUs = ({ darkMode }) => {
   );
 };
 
-export default WhyUs;
+export default Howitworks;

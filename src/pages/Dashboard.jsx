@@ -27,6 +27,22 @@ import WelcomeSection from "./WelcomeSection";
 import WhyUs from "./WhyUs";
 import Offer from "./Offer";
 import Starwith4Steps from "./Starwith4Steps";
+import DownloadAppDash from "./DownloadAppDash";
+import Categories from "./Categories";
+import Safety from "./Safety";
+import FAQPage from "./FAQPage";
+import APISection from "./APISection";
+import AboutUsPage from "./AboutUsPage";
+import PrivacyPolicyPage from "./PrivacyPolicyPage";
+import TermsOfUse from "./TermsOfUse";
+import SocialMediaLinks from "./SocialMediaLinks";
+import LogoutModal from "./LogoutModal";
+import HeroSection1 from "./HeroSection1";
+import WhyOKPinAPI from "./WhyOKPinAPI";
+import Howitworks from "./Howitworks";
+import APIAdvantages from "./APIAdvantages";
+import Offer1 from "./Offer1";
+import FAQPage1 from "./FAQPage1";
 
 // إعدادات التصميم
 const drawerWidth = 240;
@@ -34,16 +50,26 @@ const darkBackground = "#050A17"; // لون الوضع المظلم
 const activeColor = "#FF2A66"; // لون العنصر النشط
 
 export default function Dashboard() {
+  const [logoutOpen, setLogoutOpen] = useState(false);
+
   const [darkMode, setDarkMode] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [landingOpen, setLandingOpen] = useState(false); // القائمة الفرعية
   const [activeItem, setActiveItem] = useState("Hero Section"); // العنصر النشط
   const isMobile = useMediaQuery("(max-width:600px)");
+  const [apiPageOpen, setApiPageOpen] = useState(false);
+  const handleApiPageToggle = () => setApiPageOpen(!apiPageOpen);
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
   const handleLandingToggle = () => setLandingOpen(!landingOpen);
-
+  const handleOpenLogout = () => setLogoutOpen(true);
+  const handleCloseLogout = () => setLogoutOpen(false);
+  const handleConfirmLogout = () => {
+    console.log("User Logged Out!");
+    setLogoutOpen(false);
+  };
+  
   const drawerContent = (
     <>
       {/* الشعار وزر الوضع */}
@@ -92,7 +118,7 @@ export default function Dashboard() {
 
       {/* روابط الشريط الجانبي */}
       <List>
-  {/* القائمة المنسدلة الخاصة بـ Landing Page */}
+  {/* ✅ القائمة المنسدلة الخاصة بـ Landing Page */}
   <ListItem
     button
     onClick={handleLandingToggle}
@@ -101,17 +127,11 @@ export default function Dashboard() {
       "&:hover": { backgroundColor: activeColor },
     }}
   >
-    <ListItemIcon>
-      <HomeIcon
-        sx={{ color: activeItem === "Landing Page" ? "#fff" : "inherit" }}
-      />
-    </ListItemIcon>
     <ListItemText primary="Landing Page" />
     {landingOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
   </ListItem>
   <Collapse in={landingOpen} timeout="auto" unmountOnExit>
     <List component="div" disablePadding>
-      {/* روابط القائمة المنسدلة */}
       {[
         "Hero Section",
         "Welcome Section",
@@ -140,15 +160,12 @@ export default function Dashboard() {
     </List>
   </Collapse>
 
-  {/* الروابط الفردية */}
+  {/* ✅ الروابط الفردية قبل API Page */}
   {[
     "About Us",
     "Privacy Policy",
     "Terms Of Use",
-    "API Page",
-    "Social media Links",
-    "Go to Landing page",
-    "Log Out",
+    "Go to Landing page", // ✅ إعادة الرابط المحذوف
   ].map((item) => (
     <ListItem
       button
@@ -162,7 +179,73 @@ export default function Dashboard() {
       <ListItemText primary={item} />
     </ListItem>
   ))}
+
+  {/* ✅ الآن "API Page" قبل "Social Media Links" */}
+  <ListItem
+    button
+    onClick={handleApiPageToggle}
+    sx={{
+      backgroundColor: activeItem.includes("API") ? activeColor : "inherit",
+      "&:hover": { backgroundColor: activeColor },
+    }}
+  >
+    <ListItemText primary="API Page" />
+    {apiPageOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+  </ListItem>
+  <Collapse in={apiPageOpen} timeout="auto" unmountOnExit>
+    <List component="div" disablePadding>
+      {[
+        "Hero Section1",
+        "Why OKPin API",
+        "How it works",
+        "API Advantages",
+        "Offer Section1",
+        "API - FAQ",
+      ].map((item) => (
+        <ListItem
+          button
+          key={item}
+          sx={{
+            pl: 4,
+            backgroundColor: activeItem === item ? activeColor : "inherit",
+            "&:hover": { backgroundColor: activeColor },
+          }}
+          onClick={() => setActiveItem(item)}
+        >
+          <ListItemText primary={item} />
+        </ListItem>
+      ))}
+    </List>
+  </Collapse>
+
+  {/* ✅ الآن "Social Media Links" يأتي بعد "API Page" */}
+  <ListItem
+    button
+    sx={{
+      backgroundColor: activeItem === "Social media Links" ? activeColor : "inherit",
+      "&:hover": { backgroundColor: activeColor },
+    }}
+    onClick={() => setActiveItem("Social media Links")}
+  >
+    <ListItemText primary="Social Media Links" />
+  </ListItem>
+
+  {/* ✅ زر تسجيل الخروج */}
+  <ListItem
+    button
+    onClick={handleOpenLogout}
+    sx={{
+      backgroundColor: "inherit",
+      "&:hover": { backgroundColor: activeColor },
+    }}
+  >
+    <ListItemText primary="Log Out" />
+  </ListItem>
 </List>
+
+
+
+
 
     </>
   );
@@ -230,22 +313,73 @@ export default function Dashboard() {
   {activeItem === "Hero Section" && (
     <Typography variant="h4"><HeroSection darkMode={darkMode} /></Typography>
   )}
+  {activeItem === "Hero Section1" && (
+    <Typography variant="h4"><HeroSection1 darkMode={darkMode} /></Typography>
+  )}
   {activeItem === "Welcome Section" && (
     <Typography variant="h4"><WelcomeSection darkMode={darkMode}/></Typography>
   )}
   {activeItem === "Why Us" && (
     <Typography variant="h4"><WhyUs darkMode={darkMode}/></Typography>
   )}
+  {activeItem === "Why OKPin API" && (
+    <Typography variant="h4"><WhyOKPinAPI darkMode={darkMode}/></Typography>
+  )}
+   {activeItem === "How it works" && (
+    <Typography variant="h4"><Howitworks darkMode={darkMode}/></Typography>
+  )}
   {activeItem === "Offer Section" && (
     <Typography variant="h4"><Offer darkMode={darkMode}/></Typography>
+  )}
+   {activeItem === "Offer Section1" && (
+    <Typography variant="h4"><Offer1 darkMode={darkMode}/></Typography>
   )}
    {activeItem === "Star with 4 Steps" && (
     <Typography variant="h4"><Starwith4Steps darkMode={darkMode}/></Typography>
   )}
-  {activeItem === "Log Out" && (
-    <Typography variant="h4">You have logged out.</Typography>
+  {activeItem === "Download App" && (
+    <Typography variant="h4"><DownloadAppDash darkMode={darkMode}/></Typography>
   )}
+  {activeItem === "Categories" && (
+    <Typography variant="h4"><Categories darkMode={darkMode}/></Typography>
+  )}
+  {activeItem === "API Advantages" && (
+    <Typography variant="h4"><APIAdvantages darkMode={darkMode}/></Typography>
+  )}
+  {activeItem === "Safety" && (
+    <Typography variant="h4">< Safety darkMode={darkMode}/></Typography>
+  )}
+  {activeItem === "API Section" && (
+    <Typography variant="h4">< APISection darkMode={darkMode}/></Typography>
+  )}
+   {activeItem === "FAQ" && (
+    <Typography variant="h4">< FAQPage darkMode={darkMode}/></Typography>
+  )}
+   {activeItem === "API - FAQ" && (
+    <Typography variant="h4">< FAQPage1 darkMode={darkMode}/></Typography>
+  )}
+   {activeItem === "About Us" && (
+    <Typography variant="h4">< AboutUsPage darkMode={darkMode}/></Typography>
+  )}
+  {activeItem === "Privacy Policy" && (
+    <Typography variant="h4">< PrivacyPolicyPage darkMode={darkMode}/></Typography>
+  )}
+  {activeItem === "Terms Of Use" && (
+    <Typography variant="h4">< TermsOfUse darkMode={darkMode}/></Typography>
+  )}
+    {activeItem === "Social media Links" && (
+    <Typography variant="h4">< SocialMediaLinks darkMode={darkMode}/></Typography>
+  )}
+  
+
+
 </Box>
+<LogoutModal
+  open={logoutOpen}
+  handleClose={handleCloseLogout}
+  handleLogout={handleConfirmLogout}
+  darkMode={darkMode}
+/>
 
     </Box>
   );

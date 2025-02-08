@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Grid, Link, IconButton, Button } from '@mui/material';
+import { Box, Typography, Grid, Link, IconButton, Button, useTheme } from '@mui/material';
 import Whatsappicon from './icons/Whatsappicon';
 import Telegram from './icons/Telegram';
 import Twitter from './icons/Twitter';
@@ -10,11 +10,11 @@ import ControlPanelModal from './ControlPanelModal';
 
 const Footer = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const theme = useTheme();
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
   return (
-    <Box sx={{ backgroundColor: '#00040F', color: 'white', padding: '40px 20px' }}>
+    <Box sx={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary, padding: '40px 20px' }}>
       <Grid container spacing={4} justifyContent="space-between" alignItems="flex-start">
         
         {/* العمود الأول (حمل تطبيق OKpin) */}
@@ -35,8 +35,8 @@ const Footer = () => {
   <Button
     variant="contained"
     sx={{
-      backgroundColor: '#000000',
-      color: '#FFFFFF',
+      backgroundColor: theme.palette.mode === 'dark' ? '#000000' : '#F5F5F5',
+      color: theme.palette.text.primary,
       width: '100px', // حجم أصغر
       height: '50px', // تقليل الارتفاع
       textTransform: 'none',
@@ -85,8 +85,8 @@ const Footer = () => {
   <Button
     variant="contained"
     sx={{
-      backgroundColor: '#000000',
-      color: '#FFFFFF',
+      backgroundColor: theme.palette.mode === 'dark' ? '#000000' : '#F5F5F5',
+      color: theme.palette.text.primary,
       width: '120px', // حجم أصغر
       height: '50px', // تقليل الارتفاع
       textTransform: 'none',
@@ -142,16 +142,16 @@ const Footer = () => {
             تواصل معنا
           </Typography>
           <Box>
-            <IconButton href="#" sx={{ color: 'white' }}>
+            <IconButton href="#" sx={{ color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'}}>
               <Facebook />
             </IconButton>
-            <IconButton href="#" sx={{ color: 'white' }}>
+            <IconButton href="#" sx={{ color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'}}>
               <Whatsappicon />
             </IconButton>
-            <IconButton href="#" sx={{ color: 'white' }}>
+            <IconButton href="#" sx={{ color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'}}>
               <Telegram />
             </IconButton>
-            <IconButton href="#" sx={{ color: 'white' }}>
+            <IconButton href="#" sx={{ color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000'}}>
               <Twitter />
             </IconButton>
           </Box>
