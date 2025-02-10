@@ -1,9 +1,30 @@
-import React from "react";
-import { Box, Typography, Button, useTheme } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Box, Typography, useTheme } from "@mui/material";
 
 function FourdSection1() {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
+
+  // ✅ حالة لتخزين بيانات API
+  const [data, setData] = useState({ title: {}, description: {} });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchOfferData = async () => {
+      try {
+        const response = await axios.get(`/api-page/offer`);
+        setData(response.data);
+      } catch (err) {
+        setError("فشل تحميل البيانات");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOfferData();
+  }, []);
 
   return (
     <Box
@@ -53,6 +74,7 @@ function FourdSection1() {
       >
         {/* النصوص */}
         <Box sx={{ textAlign: "right", maxWidth: "500px" }}>
+          {/* ✅ العنوان */}
           <Typography
             variant="h4"
             sx={{
@@ -63,9 +85,10 @@ function FourdSection1() {
               marginBottom: "20px",
             }}
           >
-            كل عملية شراء تمنحك المزيد!
+            {loading ? "جاري التحميل..." : error ? error : data.title.ar}
           </Typography>
 
+          {/* ✅ الوصف */}
           <Typography
             variant="body1"
             sx={{
@@ -77,10 +100,14 @@ function FourdSection1() {
               marginBottom: "30px",
             }}
           >
-            مع كل عملية شراء على Okpin، ستجمع نقاط مكافآت يمكن استبدالها بسهولة بعروض وجوائز فريدة. اشترِ أكثر، اكسب أكثر!
+            {loading
+              ? "جاري تحميل البيانات..."
+              : error
+              ? "تعذر تحميل الوصف."
+              : data.description.ar}
           </Typography>
 
-          {/* زر البدء */}
+          {/* ✅ زر البدء (يمكنك تفعيله عند الحاجة) */}
           {/* <Button
             variant="contained"
             sx={{

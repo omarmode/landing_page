@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Box, Typography, Grid, Paper, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import IconHero from "../icons/IconHero";
@@ -10,36 +11,50 @@ function ThirdSection1() {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
 
-  const cards = [
-    {
-      id: 4,
-      title: "كل المنتجات في مكان واحد",
-      text: "نوفر لك بطاقات لأشهر الألعاب، البرامج، والاشتراكات الرقمية.",
-      color: "#E9BA00",
-      icon: <IconHero style={{ fill: "#FFFFFF" }} />,
-    },
-    {
-      id: 3,
-      title: "عروض لا تُقاوم",
-      text: "خصومات مذهلة تضمن لك التوفير مع كل عملية شراء.",
-      color: "#00BF16",
-      icon: <IconHero2 />,
-    },
-    {
-      id: 2,
-      title: "نقاط مكافآت مُجزية",
-      text: "اجمع النقاط واستبدلها بعروض وجوائز حصرية.",
-      color: "#9022FF",
-      icon: <IconHero3 />,
-    },
-    {
-      id: 1,
-      title: "واجهة بسيطة وفعّالة",
-      text: "تصميم يُسهل عليك الوصول لما تبحث عنه بأقل جهد.",
-      color: "#0059FF",
-      icon: <IconHero4 />,
-    },
-  ];
+  // ✅ حالة لتخزين بيانات الكروت القادمة من الـ API
+  const [cards, setCards] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // الأرقام الخاصة بالكروت التي نريد جلبها من الـ API
+    const cardOrders = [1, 2, 3, 4];
+
+    const fetchCards = async () => {
+      try {
+        // ✅ جلب البيانات لكل الكروت في وقت واحد باستخدام Promise.all
+        const responses = await Promise.all(
+          cardOrders.map((order) =>
+            axios.get(`/api-page/why-ok/${order}`).then((res) => res.data)
+          )
+        );
+
+        setCards(responses); // تخزين البيانات في الـ state
+      } catch (err) {
+        setError("فشل تحميل البيانات");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCards();
+  }, []);
+
+  // أيقونات الكروت مرتبة حسب `order`
+  const icons = {
+    1: <IconHero4 />,
+    2: <IconHero3 />,
+    3: <IconHero2 />,
+    4: <IconHero />,
+  };
+
+  // ✅ إعادة الألوان الأصلية لكل كارت حسب `order`
+  const cardColors = {
+    1: "#0059FF", // واجهة بسيطة وفعالة
+    2: "#9022FF", // نقاط مكافآت مُجزية
+    3: "#00BF16", // عروض لا تُقاوم
+    4: "#E9BA00", // كل المنتجات في مكان واحد
+  };
 
   return (
     <Box
@@ -62,12 +77,18 @@ function ThirdSection1() {
         !؟ OKpin لماذا
       </Typography>
 
-      {/* البطاقات */}
+      {/* ✅ عرض رسالة تحميل أو خطأ إذا لم يتم جلب البيانات */}
+      {loading && <Typography>جاري تحميل البيانات...</Typography>}
+      {error && <Typography sx={{ color: "red" }}>{error}</Typography>}
+
+      {/* ✅ عرض الكروت بعد تحميل البيانات */}
       <Grid container spacing={2} justifyContent="center">
-        {cards.slice().reverse().map((card, index) => {
+        {cards.map((card, index) => {
           const isTopBackground = index % 2 !== 0; // الخلفية العلوية للكارد الرابع والثاني
+          const cardColor = cardColors[card.order] || "#0059FF"; // استخدام اللون حسب `order`
+
           return (
-            <Grid item xs={12} sm={6} md={3} key={card.id}>
+            <Grid item xs={12} sm={6} md={3} key={card._id}>
               <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -87,7 +108,7 @@ function ThirdSection1() {
                     justifyContent: "center",
                     alignItems: "center",
                     position: "relative",
-                    overflow: "hidden", // لمنع تجاوز الخلفية للحواف
+                    overflow: "hidden",
                     transition: "transform 0.3s ease-in-out",
                     "&:hover": {
                       transform: "translateY(-10px)",
@@ -99,8 +120,8 @@ function ThirdSection1() {
                     sx={{
                       position: "absolute",
                       width: "100%",
-                      height: "25%", // تقليل الارتفاع ليكون أصغر من النصف
-                      backgroundColor: card.color,
+                      height: "25%",
+                      backgroundColor: cardColor, // ✅ تعيين اللون الصحيح لكل كارد
                       top: isTopBackground ? 0 : "auto",
                       bottom: isTopBackground ? "auto" : 0,
                       borderRadius: isTopBackground
@@ -115,28 +136,28 @@ function ThirdSection1() {
                       width: "60px",
                       height: "60px",
                       borderRadius: "50%",
-                      backgroundColor: card.color,
+                      backgroundColor: cardColor, // ✅ تعيين اللون الصحيح لكل كارد
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
                       boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
                       position: "absolute",
-                      top: isTopBackground ? "0%" : "auto", // تحديد موقع الأيقونة بناءً على الخلفية
+                      top: isTopBackground ? "0%" : "auto",
                       bottom: isTopBackground ? "auto" : "30%",
-                      transform: "translateY(50%)", // لضبط الأيقونة في منتصف الخلفية
+                      transform: "translateY(50%)",
                     }}
                   >
-                    {card.icon}
+                    {icons[card.order] || <IconHero />}
                   </Box>
 
                   {/* المحتوى النصي */}
                   <Box
                     sx={{
-                      marginTop: isTopBackground ? "50px" : "-20px", // المسافة لضبط النص
+                      marginTop: isTopBackground ? "50px" : "-20px",
                     }}
                   >
                     <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                      {card.title}
+                      {card.title.ar}
                     </Typography>
                     <Typography
                       variant="body1"
@@ -145,7 +166,7 @@ function ThirdSection1() {
                         padding: "0 10px",
                       }}
                     >
-                      {card.text}
+                      {card.description.ar}
                     </Typography>
                   </Box>
                 </Paper>

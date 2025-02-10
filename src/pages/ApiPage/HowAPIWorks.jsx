@@ -1,9 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Box, Typography, useTheme, Grid } from "@mui/material";
 
 function HowAPIWorks() {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
+
+  // ✅ حالة لتخزين بيانات API
+  const [data, setData] = useState({ title: {}, description: {} });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchHowItWorks = async () => {
+      try {
+        const response = await axios.get(`/api-page/how-it-works`);
+        setData(response.data);
+      } catch (err) {
+        setError("فشل تحميل البيانات");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHowItWorks();
+  }, []);
 
   return (
     <Box
@@ -15,7 +36,8 @@ function HowAPIWorks() {
       }}
     >
       <Grid container spacing={4} alignItems="center">
-      <Grid item xs={12} md={6} display="flex" justifyContent="center">
+        {/* ✅ الصورة */}
+        <Grid item xs={12} md={6} display="flex" justifyContent="center">
           <Box
             component="img"
             src="/Rectangle__1_-removebg-preview.png" // ضع مسار الصورة هنا
@@ -27,48 +49,47 @@ function HowAPIWorks() {
             }}
           />
         </Grid>
-        {/* النص */}
-        <Grid item xs={12} md={6} sx={{ textAlign: "right" }}> {/* ضبط المحاذاة */}
-  <Typography
-    variant="h4"
-    sx={{
-      fontWeight: "700",
-      color: "#FF2A66",
-      marginBottom: "16px",
-      textAlign: "right", // يجعل العنوان يبدأ من أقصى اليمين
-    }}
-  >
-   ؟Okpin API  كيف يعمل 
-  </Typography>
 
-  <Typography
-  variant="body1"
-  sx={{
-    fontSize: { xs: "18px", md: "22px" }, // تكبير الخط ليكون أوضح
-    lineHeight: "2", // زيادة التباعد بين الأسطر
-    maxWidth: "600px",
-    textAlign: "right", // محاذاة النص إلى اليمين
-    display: "block", // يجعله يأخذ العرض الكامل
-    width: "100%", // يضمن التمدد الكامل داخل Grid
-    marginLeft: "auto", // يدفع النص بالكامل إلى أقصى اليمين
-  }}
->
-  استمتع بخطوات بسيطة لاتمام الطلبات بشكل أوتوماتيكي!
-  <br />- يطلب العميل منتجًا عبر منصتك.
-  <br />- يقوم العميل بكتابة البطاقة الرقمية أو المنتج المطلوب من خلال منصتك.
-  <br />- يشتري متجرك المنتج من نظام Okpin.
-  <br />- يتم ربط طلب العميل بنظامنا لتوفير المنتج بشكل فوري.
-  <br />- يستلم العميل الطلب مباشرة.
-  <br />- يوفر نظامنا تسليم المنتج إلى العميل فورًا دون أي تأخير.
-  <br />- استمتع بالتحكم دون أي مجهود إضافي.
-  <br />- اجعل متجرك يعمل على مدار الساعة دون تدخل يدوي، وركز على تنمية عملك!
-</Typography>
+        {/* ✅ النصوص من API */}
+        <Grid item xs={12} md={6} sx={{ textAlign: "right" }}>
+          {/* ✅ العنوان */}
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: "700",
+              color: "#FF2A66",
+              marginBottom: "16px",
+              textAlign: "right",
+            }}
+          >
+            {loading ? "جاري التحميل..." : error ? error : data.title.ar}
+          </Typography>
 
-</Grid>
-
-
-        {/* الصورة */}
-       
+          {/* ✅ الوصف */}
+          <Typography
+            variant="body1"
+            sx={{
+              fontSize: { xs: "18px", md: "22px" },
+              lineHeight: "2",
+              maxWidth: "600px",
+              textAlign: "right",
+              display: "block",
+              width: "100%",
+              marginLeft: "auto",
+            }}
+          >
+            {loading
+              ? "جاري تحميل البيانات..."
+              : error
+              ? "تعذر تحميل الوصف."
+              : data.description.ar.split("\n").map((line, index) => (
+                  <React.Fragment key={index}>
+                    {line}
+                    <br />
+                  </React.Fragment>
+                ))}
+          </Typography>
+        </Grid>
       </Grid>
     </Box>
   );

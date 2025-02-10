@@ -1,9 +1,13 @@
-import React, { useState } from "react";
-import { Box, TextField, Button, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Box, TextField, Button, Typography, Snackbar, Alert } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 
+// ✅ تعيين `baseURL` حتى لا تحتاج لكتابته في كل مرة
+axios.defaults.baseURL = "https://cms-i47k.onrender.com";
+
 const HeroSection1 = ({ darkMode }) => {
-  // حالة لحفظ البيانات من الـ inputs
+  // ✅ حفظ البيانات القادمة من الـ API
   const [formData, setFormData] = useState({
     titleAr: "",
     titleEn: "",
@@ -11,25 +15,82 @@ const HeroSection1 = ({ darkMode }) => {
     descriptionEn: "",
   });
 
+  // ✅ حالة التوستر (Snackbar) للنجاح أو الفشل
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success", // success | error
+  });
+
+  // ✅ جلب البيانات عند تحميل الصفحة
+  useEffect(() => {
+    axios
+      .get("/api-page/hero")
+      .then((response) => {
+        if (response.data && response.data.title && response.data.description) {
+          setFormData({
+            titleAr: response.data.title.ar || "",
+            titleEn: response.data.title.en || "",
+            descriptionAr: response.data.description.ar || "",
+            descriptionEn: response.data.description.en || "",
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("❌ Error fetching data:", error);
+        setSnackbar({
+          open: true,
+          message: "❌ فشل تحميل البيانات!",
+          severity: "error",
+        });
+      });
+  }, []);
+
+  // ✅ تحديث البيانات عند إدخال المستخدم
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSave = () => {
-    console.log("Saved Data:", formData);
+  // ✅ إرسال البيانات عند الضغط على "Save Changes"
+  const handleSave = async () => {
+    try {
+      const response = await axios.patch("/api-page/hero", {
+        title: { ar: formData.titleAr, en: formData.titleEn },
+        description: { ar: formData.descriptionAr, en: formData.descriptionEn },
+      });
+
+      console.log("✅ Success:", response.data);
+      setSnackbar({
+        open: true,
+        message: "✅ تم حفظ التغييرات بنجاح!",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("❌ Error updating:", error.response?.data || error);
+      setSnackbar({
+        open: true,
+        message: "❌ فشل التحديث! تحقق من الاتصال بالإنترنت.",
+        severity: "error",
+      });
+    }
+  };
+
+  // ✅ إغلاق `Snackbar`
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
     <Box
       sx={{
         padding: 3,
-        backgroundColor: darkMode ? "#050A17" : "#fff", // لون الخلفية حسب الوضع
-        color: darkMode ? "#fff" : "#000", // لون النصوص حسب الوضع
+        backgroundColor: darkMode ? "#050A17" : "#fff",
+        color: darkMode ? "#fff" : "#000",
         borderRadius: "12px",
       }}
     >
-      {/* العنوان مع الأيقونة */}
+      {/* ✅ العنوان مع الأيقونة */}
       <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
         <HomeIcon sx={{ color: "#FF2A66", fontSize: "24px", mr: 1 }} />
         <Typography variant="h6" component="h1">
@@ -37,7 +98,7 @@ const HeroSection1 = ({ darkMode }) => {
         </Typography>
       </Box>
 
-      {/* الحقول */}
+      {/* ✅ الحقول */}
       <Box
         sx={{
           display: "grid",
@@ -48,133 +109,86 @@ const HeroSection1 = ({ darkMode }) => {
       >
         <TextField
           label="Title (Arabic)"
-          placeholder="اكتب هنا"
-          multiline
-          rows={3}
           name="titleAr"
           value={formData.titleAr}
           onChange={handleChange}
-          InputProps={{
-            style: { color: darkMode ? "#fff" : "#000" }, // لون النص حسب الوضع
-          }}
-          InputLabelProps={{
-            style: { color: darkMode ? "#fff" : "#000" }, // لون العنوان حسب الوضع
-          }}
+          multiline
+          rows={3}
+          placeholder="اكتب هنا"
           sx={{
-            backgroundColor: darkMode ? "#131D32" : "#f5f5f5", // خلفية الحقل
+            backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
             borderRadius: "12px",
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: darkMode ? "#4B6A9B" : "#ccc", // لون الحدود حسب الوضع
-              },
-              "&:hover fieldset": {
-                borderColor: "#FF2A66", // لون الحدود عند التحويم
-              },
-            },
           }}
         />
         <TextField
           label="Title (English)"
-          placeholder="Write here"
-          multiline
-          rows={3}
           name="titleEn"
           value={formData.titleEn}
           onChange={handleChange}
-          InputProps={{
-            style: { color: darkMode ? "#fff" : "#000" },
-          }}
-          InputLabelProps={{
-            style: { color: darkMode ? "#fff" : "#000" },
-          }}
+          multiline
+          rows={3}
+          placeholder="Write here"
           sx={{
             backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
             borderRadius: "12px",
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: darkMode ? "#4B6A9B" : "#ccc",
-              },
-              "&:hover fieldset": {
-                borderColor: "#FF2A66",
-              },
-            },
           }}
         />
         <TextField
           label="Description (Arabic)"
-          placeholder="اكتب هنا"
-          multiline
-          rows={5}
           name="descriptionAr"
           value={formData.descriptionAr}
           onChange={handleChange}
-          InputProps={{
-            style: { color: darkMode ? "#fff" : "#000" },
-          }}
-          InputLabelProps={{
-            style: { color: darkMode ? "#fff" : "#000" },
-          }}
+          multiline
+          rows={5}
+          placeholder="اكتب هنا"
           sx={{
             backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
             borderRadius: "12px",
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: darkMode ? "#050A17" : "#ccc",
-              },
-              "&:hover fieldset": {
-                borderColor: "#FF2A66",
-              },
-            },
           }}
         />
         <TextField
           label="Description (English)"
-          placeholder="Write here"
-          multiline
-          rows={5}
           name="descriptionEn"
           value={formData.descriptionEn}
           onChange={handleChange}
-          InputProps={{
-            style: { color: darkMode ? "#fff" : "#000" },
-          }}
-          InputLabelProps={{
-            style: { color: darkMode ? "#fff" : "#000" },
-          }}
+          multiline
+          rows={5}
+          placeholder="Write here"
           sx={{
             backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
             borderRadius: "12px",
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: darkMode ? "#4B6A9B" : "#ccc",
-              },
-              "&:hover fieldset": {
-                borderColor: "#FF2A66",
-              },
-            },
           }}
         />
       </Box>
 
-      {/* زر الحفظ */}
+      {/* ✅ زر الحفظ */}
       <Button
         onClick={handleSave}
         variant="contained"
         sx={{
           borderRadius: "12px",
           padding: "10px 20px",
-          background:
-            "linear-gradient(238deg, #E9BA00 -48.58%, #FF2A66 59.6%)",
+          background: "linear-gradient(238deg, #E9BA00 -48.58%, #FF2A66 59.6%)",
           color: "#fff",
           fontWeight: "bold",
           "&:hover": {
-            background:
-              "linear-gradient(238deg, #FF2A66 -48.58%, #E9BA00 59.6%)",
+            background: "linear-gradient(238deg, #FF2A66 -48.58%, #E9BA00 59.6%)",
           },
         }}
       >
         Save Changes
       </Button>
+
+      {/* ✅ Snackbar لإظهار نجاح أو فشل العملية */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

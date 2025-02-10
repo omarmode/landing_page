@@ -1,19 +1,40 @@
 // pages/Home.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Box, Typography } from '@mui/material';
-import ThirdSection from '../ThirdSection';
-import FourdSection from '../FourdSection';
-import AccordionPage from '../AccordionPage';
-import Footer from '../Footer';
-import LogoDark from '../LogoDark';
 import ThirdSection1 from './ThirdSection1';
 import HowAPIWorks from './HowAPIWorks';
 import FeaturesSection from './FeaturesSection';
 import FourdSection1 from './FourdSection1';
 import AccordionPage1 from './AccordionPage1';
+import Footer from '../Footer';
 
-function APiPage({darkMode}) {
+function APiPage({ darkMode }) {
   const isDarkMode = darkMode;
+
+  // تخزين بيانات API
+  const [heroData, setHeroData] = useState({ title: {}, description: {} });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchHeroData = async () => {
+      try {
+        const response = await axios.get('/api-page/hero'); // استخدام proxy
+        setHeroData(response.data);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError('فشل تحميل البيانات');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHeroData();
+  }, []);
+
+  if (loading) return <p>جاري التحميل...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <>
@@ -48,10 +69,7 @@ function APiPage({darkMode}) {
           },
         }}
       >
-        {/* لوجو */}
-        
-
-        {/* العنوان الرئيسي */}
+        {/* العنوان الرئيسي (محمل من API) */}
         <Typography
           variant="h2"
           gutterBottom
@@ -59,13 +77,13 @@ function APiPage({darkMode}) {
             fontWeight: 'bold',
             position: 'relative',
             zIndex: 2,
-            fontSize: { xs: '28px', md: '48px' }, // خط كبير
+            fontSize: { xs: '28px', md: '48px' },
           }}
         >
-          تكامل سهل لبيع المنتجات الرقمية
+          {heroData.title?.ar || 'جاري تحميل العنوان...'}
         </Typography>
 
-        {/* الوصف النصي */}
+        {/* الوصف النصي (محمل من API) */}
         <Typography
           variant="h5"
           sx={{
@@ -73,17 +91,17 @@ function APiPage({darkMode}) {
             zIndex: 2,
             marginTop: '10px',
             maxWidth: '800px',
-            fontSize: { xs: '16px', md: '24px' }, // استجابة للشاشات الصغيرة
+            fontSize: { xs: '16px', md: '24px' },
           }}
         >
-          اجعل عملياتك التجارية أكثر كفاءة من خلال دمج واجهة API الخاصة بـ Okpin في منصتك. استمتع بإدارة أوتوماتيكية كاملة لمنتجاتك الرقمية، من الطلب حتى التسليم. كل هذا بنقرة واحدة!
+          {heroData.description?.ar || 'جاري تحميل الوصف...'}
         </Typography>
       </Box>
 
       {/* الأقسام الأخرى */}
       <ThirdSection1 />
-      <HowAPIWorks/>
-      <FeaturesSection/>
+      <HowAPIWorks />
+      <FeaturesSection />
       <FourdSection1 />
       <AccordionPage1 />
       <Footer />
