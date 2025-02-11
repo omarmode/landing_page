@@ -1,7 +1,6 @@
-// pages/Home.jsx
 import React from 'react';
-import { Typography, Button } from '@mui/material';
-import './Home.css'; 
+import { Typography, Button, Box, useTheme , useMediaQuery } from '@mui/material';
+// import './Home.css'; 
 import SecondSection from './SecondSection';
 import ThirdSection from './ThirdSection';
 import FourdSection from './FourdSection';
@@ -12,13 +11,32 @@ import AccordionPage from './AccordionPage';
 import FeatureSection from './FeatureSection';
 import Footer from './Footer';
 
-function Home() {
+function Home({ darkMode }) {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
+ const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   return (
-    <>
-    <div className="home-container">
+
+   <>
+    <Box className="home-container" sx={{  display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    height: '100vh',
+    padding: '20px',
+    paddingTop: isMobile ? '100px' : '60px',
+    color: '#ffffff',
+    position: 'relative', 
+    backgroundSize: 'cover',
+    backgroundColor: darkMode ? theme.palette.background.default : theme.palette.background.paper,
+    backgroundImage: theme.palette.mode === 'dark' 
+    ? "url('/Leonardo_Phoenix_10_Design_a_vibrant_and_colorful_banner_for_t_3 (1) 1.png')"
+    : `linear-gradient(180deg, #ffffff 2.49%, rgba(255, 255, 255, 0.00) 50.86%, #ffffff 84.56%), url('/lightModeCover.png')`,
+    }}>
       
-      <div className="logo-container">
-       
+      <Box className="logo-container" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      {isDarkMode?( 
         <svg width="72" height="26" viewBox="0 0 72 26" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Group 633337 2" clip-path="url(#clip0_4383_3743)">
 <path id="Vector" d="M45.9682 0.353523C46.1288 0.400739 46.2884 0.449856 46.448 0.500332C46.0903 0.933707 45.6975 1.32867 45.3002 1.72513C45.225 1.80041 45.1498 1.87571 45.0746 1.95103C44.8688 2.15711 44.6628 2.36299 44.4567 2.56883C44.2342 2.79118 44.0119 3.01373 43.7896 3.23625C43.3543 3.67184 42.9188 4.10724 42.4833 4.54258C42.1292 4.89647 41.7752 5.25043 41.4213 5.60444C41.3709 5.65486 41.3205 5.70527 41.2686 5.75721C41.1662 5.85963 41.0638 5.96205 40.9614 6.06447C40.0015 7.02459 39.0413 7.98451 38.0811 8.94435C37.2576 9.76753 36.4343 10.5909 35.6111 11.4144C34.6548 12.3711 33.6983 13.3277 32.7417 14.2841C32.6397 14.3861 32.5376 14.4882 32.4355 14.5902C32.3853 14.6404 32.3351 14.6906 32.2834 14.7423C31.9299 15.0957 31.5766 15.4492 31.2232 15.8027C30.7924 16.2337 30.3615 16.6645 29.9305 17.0952C29.7106 17.3149 29.4908 17.5346 29.2712 17.7545C29.07 17.9559 28.8685 18.1572 28.667 18.3584C28.5943 18.431 28.5217 18.5037 28.4491 18.5764C28.0976 18.9286 27.7444 19.2754 27.3654 19.5982C27.2001 19.7408 27.0476 19.8946 26.8947 20.0502C26.8629 20.0824 26.8312 20.1145 26.7985 20.1477C26.7306 20.2165 26.6628 20.2854 26.595 20.3544C26.4868 20.4645 26.3782 20.5743 26.2695 20.684C25.9609 20.9955 25.6524 21.3072 25.3451 21.62C23.6816 23.3126 23.6816 23.3126 22.8141 23.861C22.7597 23.8961 22.7053 23.9311 22.6493 23.9673C22.5224 24.0458 22.3948 24.1191 22.2634 24.1897C22.2181 24.2144 22.1729 24.2392 22.1263 24.2646C21.2558 24.7324 20.3529 25.0474 19.3988 25.2954C19.3514 25.3079 19.3039 25.3203 19.255 25.3331C17.829 25.6863 16.0377 25.6519 14.6174 25.2954C14.5701 25.2837 14.5228 25.272 14.4741 25.2599C12.3919 24.7313 10.699 23.6607 9.203 22.1329C9.08867 22.0207 8.97046 21.9176 8.84818 21.8142C8.49571 21.5074 8.1682 21.1763 7.83926 20.8448C7.72446 20.7292 7.60944 20.6137 7.49437 20.4983C7.20881 20.2118 6.92362 19.925 6.63842 19.6382C6.39661 19.395 6.15466 19.152 5.91252 18.9091C5.80009 18.7963 5.68787 18.6832 5.57566 18.5701C5.16226 18.1535 5.16226 18.1535 4.72633 17.7608C4.26405 17.3652 3.84426 16.9213 3.41518 16.4906C3.31643 16.3917 3.21767 16.2929 3.1189 16.194C2.86047 15.9353 2.60226 15.6765 2.34409 15.4175C2.08 15.1527 1.81571 14.8881 1.55144 14.6235C1.03406 14.1054 0.5169 13.5871 -0.00012207 13.0686C0.0965176 12.8493 0.212363 12.7026 0.381598 12.5337C0.43179 12.4833 0.481985 12.4329 0.533698 12.381C0.588055 12.3271 0.64241 12.2732 0.698414 12.2177C0.754537 12.1617 0.810663 12.1056 0.868487 12.0478C0.987414 11.9291 1.10651 11.8105 1.22576 11.6921C1.40693 11.5122 1.58755 11.3317 1.7681 11.1511C1.88395 11.0356 1.99984 10.9201 2.11576 10.8047C2.16929 10.7512 2.22282 10.6978 2.27797 10.6427C3.05977 9.86751 3.05977 9.86751 3.48348 9.58503C3.53606 9.6377 3.53607 9.6377 3.5897 9.69144C4.44417 10.5474 5.29883 11.4032 6.15369 12.2588C6.5671 12.6725 6.98044 13.0864 7.39364 13.5003C7.75394 13.8613 8.11438 14.2222 8.47495 14.5829C8.66571 14.7738 8.85641 14.9647 9.04697 15.1557C9.22668 15.3359 9.40654 15.5159 9.58653 15.6958C9.68334 15.7926 9.77997 15.8896 9.87659 15.9866C10.1785 16.2881 10.4835 16.5806 10.8087 16.857C11.0336 17.0537 11.2401 17.2691 11.4489 17.4826C11.5464 17.5813 11.6439 17.68 11.7414 17.7787C11.8923 17.9316 12.0429 18.0847 12.1932 18.2382C12.8887 18.9475 13.56 19.6124 14.4637 20.0529C14.5094 20.0755 14.5552 20.098 14.6023 20.1213C15.2471 20.427 15.9517 20.6198 16.6665 20.6506C16.7178 20.6533 16.769 20.6561 16.8218 20.6589C18.4044 20.7024 19.7962 20.1052 20.9698 19.0796C21.228 18.8275 21.4738 18.5648 21.7191 18.3003C21.7914 18.2231 21.8638 18.1459 21.9362 18.0688C22.0924 17.9023 22.2484 17.7356 22.4041 17.5687C22.8383 17.1036 23.2745 16.6404 23.7107 16.1772C23.7569 16.1281 23.8032 16.079 23.8508 16.0284C24.5831 15.2505 25.3205 14.4777 26.0617 13.7083C26.1122 13.656 26.1626 13.6036 26.2145 13.5497C26.7361 13.0083 27.2583 12.4676 27.7811 11.9274C28.0494 11.6502 28.3175 11.3728 28.5854 11.0953C28.6388 11.0401 28.6921 10.9849 28.7471 10.928C29.4979 10.1499 30.24 9.36439 30.976 8.57234C32.2428 7.20908 33.5246 5.86202 34.8376 4.54293C34.888 4.49221 34.9384 4.44149 34.9903 4.38923C38.2944 1.07012 41.07 -1.02466 45.9682 0.353523Z" fill="white"/>
@@ -35,14 +53,39 @@ function Home() {
 <rect width="71.0383" height="25" fill="white" transform="translate(0 0.5)"/>
 </clipPath>
 </defs>
-</svg>
-      </div>
+</svg>) :(<img src="/svgLight.png" alt="Light Mode Logo" width="72" height="26" />)}
+      </Box>
 
       
-      <Typography variant="h3" gutterBottom className="title">
+      <Typography variant="h3" gutterBottom className="title"    sx={{
+                fontWeight: 700,
+                fontSize: isMobile ? '24px' : '48px',
+                textAlign: 'center',
+                maxWidth: isMobile ? '60%' : '70%',
+              
+                lineHeight: isMobile ? '43.2px' : '86.4px',
+                lineHeight: isMobile ? '43.2px' : '86.4px',
+                overflowWrap: 'break-word',
+                wordWrap: 'break-word',
+                color: theme.palette.mode === 'dark' ? 'white' : 'black',
+                fontFamily: 'Tajawal, sans-serif',
+                fontWeight: 700
+              }}>
       !البطاقات الرقمية أصبحت أسهل وأوفر 
       </Typography>
-      <Typography variant="body1" className="subtitle">
+      <Typography variant="body1" className="subtitle" sx={{ textAlign: 'center',
+          fontFamily: 'Tajawal, sans-serif',
+          fontWeight: 500,
+          fontSize: isMobile ? '14px' : '24px',
+          textAlign: 'center',
+          maxWidth: isMobile ? '75%' : '70%',
+          margin: '0 auto',
+          marginBottom: isMobile ? '0.5rem' : '1.5rem',
+          lineHeight: isMobile ? '25.2px' : '43.2px',
+          overflowWrap: 'break-word',
+          wordWrap: 'break-word',
+          color: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'
+       }}>
         اكتشف تطبيقًا يحدث فرقاً! نوفر لك كل ما تحتاجه من بطاقات الألعاب، البرامج، والمنتجات الرقمية مع خصومات حصرية ونظام مكافآت يضمن لك قيمة أكبر.
       </Typography>
 
@@ -52,8 +95,10 @@ function Home() {
   color="primary" 
   className="start-button" 
   sx={{
+    marginTop: '20px',
     display: 'flex',
     height: '56px',
+    width: 'auto',
     padding: '10px 40px',
     justifyContent: 'center',
     alignItems: 'center',
@@ -61,11 +106,13 @@ function Home() {
     borderRadius: '24px',
     background: 'linear-gradient(67deg, #E9BA00 -24.26%, #FF2A66 41.56%)',
     color: '#ffffff', // لون النص
-    fontSize: '12px',
-    fontWeight: 700,
+    fontSize: '16px',
     textTransform: 'none', 
     '&:hover': {
       background: 'linear-gradient(67deg, #E9BA00 -10%, #FF2A66 50%)', 
+      fontFamily: 'Tajawal, sans-serif',
+      fontWeight: 500,
+      
     }
   }}
 >
@@ -88,7 +135,8 @@ function Home() {
     
   ))}
 </div>
-    </div>
+    </Box>
+    
 <SecondSection />
 <ThirdSection/>
 <FourdSection/>
@@ -99,6 +147,7 @@ function Home() {
 <FeatureSection/>
 <Footer/>
     </>
+    
   );
 }
 
