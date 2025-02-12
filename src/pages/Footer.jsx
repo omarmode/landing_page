@@ -174,9 +174,9 @@ const Footer = () => {
 >
   سياسة الخصوصية
 </Link>
-            <Link href="#" color="inherit" underline="none" display="block" sx={{ marginBottom: '8px' }}>
-              شروط الاستخدام
-            </Link>
+<Link href="/terms-ofuse" color="inherit" underline="none" display="block" sx={{ marginBottom: '8px' }}>
+  شروط الاستخدام
+</Link>
             <Link href="#" color="inherit" underline="none" display="block" sx={{ marginBottom: '8px' }}>
               خدمة API
             </Link>

@@ -7,13 +7,13 @@ import Whatsappicon from './icons/Whatsappicon';
 import Telegram from './icons/Telegram';
 import Logo from './icons/Logo';
 
-const TermsOfUse = ({ theme }) => {
+const TermsOfUse1= ({ theme }) => {
   const [termsData, setTermsData] = useState(null);
   const containerBackgroundColor = theme === 'dark' ? '#00040F' : '#FFFFFF';
   const textColor = theme === 'dark' ? '#FFFFFF' : '#000000';
 
   useEffect(() => {
-    axios.get('/privacy-policey')
+    axios.get('/terms-of-use')
       .then((response) => {
         setTermsData(response.data);
       })
@@ -21,7 +21,8 @@ const TermsOfUse = ({ theme }) => {
         console.error('Error fetching terms of use:', error);
       });
   }, []);
-
+ 
+  
   return (
     <Box
       sx={{
@@ -110,4 +111,4 @@ const TermsOfUse = ({ theme }) => {
   );
 };
 
-export default TermsOfUse;
+export default TermsOfUse1;
