@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography, Paper, useTheme } from "@mui/material";
 
-const StepsPage = () => {
+const StepsPage = ({ darkMode }) => {  // ✅ استقبال `darkMode`
   const theme = useTheme();
 
   const steps = [
@@ -14,7 +14,7 @@ const StepsPage = () => {
   return (
     <Box
       sx={{
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: darkMode ? "#050A17" : theme.palette.background.default,  // ✅ دعم الوضع المظلم
         color: theme.palette.text.primary,
         minHeight: "100vh",
         display: "flex",
@@ -25,24 +25,6 @@ const StepsPage = () => {
         position: "relative",
       }}
     >
-      {/* الخط المنقط بين الدائرتين الصغيرتين لرقمي 1 و 2 */}
-      <svg
-  width="20%"
-  height="100%"
-  style={{ position: "absolute", top: 49, left: 400, zIndex: 8 }}
->
-  <line
-    x1="100"  // نقطة البداية X للدائرة الصغيرة لرقم 1
-    y1="10"  // نقطة البداية Y للدائرة الصغيرة لرقم 1
-    x2="250" // نقطة النهاية X للدائرة الصغيرة لرقم 2
-    y2="240" // نقطة النهاية Y للدائرة الصغيرة لرقم 2 (زيادة تجعل الميل للأسفل)
-    stroke="#FFF"
-    strokeWidth="2"
-    strokeDasharray="5, 5"
-  />
-</svg>
-
-
       {/* العنوان الرئيسي */}
       <Box
         sx={{
@@ -54,7 +36,7 @@ const StepsPage = () => {
         }}
       >
         {/* الرقم 1 */}
-        <StepCircle step={steps[0]} position="left" />
+        <StepCircle step={steps[0]} position="left" darkMode={darkMode} />
 
         {/* العنوان */}
         <Typography
@@ -70,7 +52,7 @@ const StepsPage = () => {
         </Typography>
 
         {/* الرقم 4 */}
-        <StepCircle step={steps[3]} position="right" />
+        <StepCircle step={steps[3]} position="right" darkMode={darkMode} />
       </Box>
 
       {/* الأرقام (2 و 3) في الأسفل */}
@@ -79,36 +61,34 @@ const StepsPage = () => {
           display: "flex",
           justifyContent: "space-between",
           width: "100%",
-          maxWidth: "900px", // تصغير المسافة الكلية بين الحاويتين
+          maxWidth: "900px",
           position: "relative",
-          top: "-500px", // رفع الحاوية بأكملها للأعلى
+          top: "-500px",
         }}
       >
         {/* الرقم 2 */}
-        <StepCircle step={steps[1]} position="right" /> {/* عكس اتجاه الكارد لرقم 2 */}
+        <StepCircle step={steps[1]} position="right" darkMode={darkMode} />
 
         {/* الرقم 3 */}
-        <StepCircle step={steps[2]} position="left" /> {/* عكس اتجاه الكارد لرقم 3 */}
+        <StepCircle step={steps[2]} position="left" darkMode={darkMode} />
       </Box>
     </Box>
   );
 };
 
-const StepCircle = ({ step, position }) => {
-  // تحديد الألوان الخاصة بالخطوات
+const StepCircle = ({ step, position, darkMode }) => {
   const colors = {
-    2: "#00BF16", // لون الرقم 2
-    3: "#9022FF", // لون الرقم 3
-    4: "#0059FF", // لون الرقم 4
+    2: "#00BF16",
+    3: "#9022FF",
+    4: "#0059FF",
   };
 
   const borderColor = colors[step.number] || "var(--primary-yellow, #E9BA00)";
   const circleColor = colors[step.number] || "#E9BA00";
 
-  // تحديد موضع الدائرة الصغيرة بناءً على الرقم
   const smallCirclePosition = step.number === 1 || step.number === 4 
-    ? { top: "10px", left: position === "left" ? "140px" : "-40px" } // عكس الاتجاه لرقمي 1 و 4
-    : { top: "10px", left: position === "left" ? "-40px" : "140px" }; // الاتجاه العادي لرقمي 2 و 3
+    ? { top: "10px", left: position === "left" ? "140px" : "-40px" }
+    : { top: "10px", left: position === "left" ? "-40px" : "140px" };
 
   return (
     <Box
@@ -121,39 +101,48 @@ const StepCircle = ({ step, position }) => {
     >
       {/* الخلفية الخاصة بالأرقام (دائرة كبيرة) */}
       <Box
-        sx={{
-          position: "relative",
-          width: "104px",
-          height: "104px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
-          zIndex: 1, // جعل الدائرة في الخلف
-        }}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="104" height="104" viewBox="0 0 104 104" fill="none">
-          <circle
-            cx="52.4717"
-            cy="52.4717"
-            r="51.5283"
-            fill={circleColor} // تغيير لون الدائرة بناءً على الرقم
-          />
-        </svg>
+  sx={{
+    position: "relative",
+    width: "104px",
+    height: "104px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+    zIndex: 1,
 
-        {/* الرقم داخل الدائرة الكبيرة */}
-        <Box
-          sx={{
-            position: "absolute",
-            color: "#FFF",
-            fontWeight: "bold",
-            fontSize: "24px",
-            zIndex: 2, // جعل الرقم فوق الدائرة
-          }}
-        >
-          {step.number}
-        </Box>
-      </Box>
+    "@media (max-width: 968px)": {
+      position: "relative",
+      marginTop: "120px", // ✅ تحريك كل الدوائر للأسفل بالتساوي
+      display: "flex",
+      flexDirection: "column", // ✅ لمنع تحريك الكروت عند تحريك الدوائر
+      alignItems: "center",
+    },
+  }}
+>
+  <svg xmlns="http://www.w3.org/2000/svg" width="104" height="104" viewBox="0 0 104 104" fill="none">
+    <circle cx="52.4717" cy="52.4717" r="51.5283" fill={circleColor} />
+  </svg>
+
+  {/* الرقم داخل الدائرة الكبيرة */}
+  <Box
+    sx={{
+      position: "absolute",
+      color: "#FFF",
+      fontWeight: "bold",
+      fontSize: "24px",
+      zIndex: 2,
+
+      "@media (max-width: 968px)": {
+        marginTop: "20px", // ✅ التأكد من أن الرقم يتحرك مع الدائرة
+      },
+    }}
+  >
+    {step.number}
+  </Box>
+</Box>
+
+ 
 
       {/* الدائرة الصغيرة بجانب الدائرة الكبيرة */}
       <Box
@@ -163,39 +152,66 @@ const StepCircle = ({ step, position }) => {
           height: "16px",
           borderRadius: "50%",
           backgroundColor: circleColor,
-          ...smallCirclePosition, // تطبيق الموضع بناءً على الرقم
+          ...smallCirclePosition,
         }}
       />
 
       {/* الكارد */}
-      <Paper
-        elevation={3}
-        sx={{
-          background: "var(--primary-bg---card, #050A17)",
-          color: "#FFF",
-          borderRadius: "24px",
-          border: `0.5px solid ${borderColor}`, // تغيير لون البوردر بناءً على الرقم
-          opacity: 0.7,
-          backdropFilter: "blur(40px)",
-          textAlign: "center",
-          fontSize: "14px",
-          lineHeight: "1.5",
-          width: "263.205px",
-          height: "268.613px",
-          position: "absolute",
-          top: "65px", // خفض الكارد قليلاً
-          left: position === "left" ? "-179px" : "40px", // عكس الاتجاه بناءً على الموقع
-          transform: position === "left" ? "rotate(-5deg)" : "rotate(5deg)", // الميلان بناءً على الموقع
-          zIndex: 3, // جعل الكارد فوق الدائرة والرقم
-          padding: "20px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          whiteSpace: "pre-wrap",
-        }}
-      >
-        {step.text}
-      </Paper>
+      <Box
+  sx={{
+    display: "flex",
+    flexWrap: "wrap", // ✅ السماح بتقسيم الكروت إلى سطرين في الشاشات الصغيرة
+    justifyContent: "center", // ✅ توزيع الكروت بشكل متساوٍ
+   
+    "@media (max-width: 968px)": {
+      marginTop: "420px", // ✅ جعل كل الكروت تنزل للأسفل وليس فقط أول كاردين!
+    },
+  }}
+>
+  <Paper
+    elevation={3}
+    sx={{
+      background: darkMode ? "#050A17" : "#FFF",
+      color: darkMode ? "#FFF" : "#000",
+      borderRadius: "24px",
+      border: `0.5px solid ${borderColor}`,
+      opacity: 0.7,
+      backdropFilter: "blur(40px)",
+      textAlign: "center",
+      fontSize: "20px",
+      lineHeight: "1.5",
+      width: "263.205px",
+      height: "268.613px",
+      position: "absolute",
+      top: "65px",
+      left: position === "left" ? "-179px" : "40px",
+      transform: position === "left" ? "rotate(-5deg)" : "rotate(5deg)",
+      zIndex: 3,
+      padding: "20px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      whiteSpace: "pre-wrap",
+
+      // ✅ **تعديلات خاصة بالشاشات الصغيرة (`sm`) فقط**
+      "@media (max-width: 968px)": {
+        position: "relative",
+        width: "120px",
+        height: "120px",
+        fontSize: "12px",
+        padding: "5px",
+        transform: "none",
+        left: "unset",
+        top: "unset",
+      },
+    }}
+  >
+    {step.text}
+  </Paper>
+</Box>
+
+
+
     </Box>
   );
 };

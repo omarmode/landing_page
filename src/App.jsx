@@ -36,7 +36,8 @@ function App() {
         <Routes>
           {/* **مسار رئيسي يحتوي على `Navbar` ما عدا في صفحة `dashboard`** */}
           <Route element={<Layout darkMode={darkMode} setDarkMode={setDarkMode} />}>
-            <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home darkMode={darkMode} />} />
+
             <Route path="/about" element={<About />} />
             <Route path="/APiPage" element={<APiPage darkMode={darkMode} />} />
             <Route path="/about-us" element={<AboutUs theme={darkMode ? 'dark' : 'light'} />} />

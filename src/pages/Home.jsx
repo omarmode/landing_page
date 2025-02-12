@@ -12,7 +12,7 @@ import AccordionPage from './AccordionPage';
 import FeatureSection from './FeatureSection';
 import Footer from './Footer';
 
-function Home() {
+function Home({ darkMode }) {
   return (
     <>
     <div className="home-container">
@@ -92,7 +92,8 @@ function Home() {
 <SecondSection />
 <ThirdSection/>
 <FourdSection/>
-<StepsPage/>
+<StepsPage darkMode={darkMode} />
+
 <NewPage />
 <StyledPage/>
 <AccordionPage />

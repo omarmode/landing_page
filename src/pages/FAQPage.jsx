@@ -35,7 +35,7 @@ const FAQPage = ({ darkMode }) => {
   
       while (true) {
         try {
-          const response = await axios.get(`/landing-page/steps/${order}`);
+          const response = await axios.get(`/landing-page/faq/${order}`);
   
           // ✅ تأكد من أن الطلب يحتوي على بيانات قبل إضافته
           if (!response.data || !response.data._id) {
@@ -101,7 +101,7 @@ const FAQPage = ({ darkMode }) => {
     const order = buttons.indexOf(activeButton) + 1; // حساب رقم الطلب
   
     try {
-      await axios.delete(`/landing-page/steps/${order}`);
+      await axios.delete(`/landing-page/faq/${order}`);
       console.log(`🗑️ Order ${order} deleted successfully!`);
       
       // حذف الزر من الواجهة
