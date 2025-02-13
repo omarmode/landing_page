@@ -1,4 +1,4 @@
-// import React, { useState } from "react";
+
 import {
   Box,
   TextField,
@@ -76,7 +76,7 @@ const FAQPage = ({ darkMode }) => {
     const order = buttons.indexOf(activeButton) + 1; // حساب رقم الطلب
     
     try {
-      const response = await axios.patch(`/landing-page/steps/${order}`, {
+      const response = await axios.patch(`/landing-page/faq/${order}`, {
         title: {
           ar: faqData[activeButton].questionArabic,
           en: faqData[activeButton].questionEnglish,
@@ -126,7 +126,7 @@ const FAQPage = ({ darkMode }) => {
     const newButtonName = toWords(nextNumber).replace(/^\w/, (c) => c.toUpperCase());
   
     try {
-      const response = await axios.post(`/landing-page/steps`, {
+      const response = await axios.post(`/landing-page/faq`, {
         title: { ar: "", en: "" },
         description: { ar: "", en: "" },
         order: nextNumber, // رقم الطلب الجديد
@@ -155,17 +155,7 @@ const FAQPage = ({ darkMode }) => {
     }));
   };
 
-  // const handleDeleteQuestion = () => {
-  //   const newButtons = buttons.filter((btn) => btn !== activeButton);
-  //   const newFaqData = { ...faqData };
-  //   delete newFaqData[activeButton];
-
-  //   setButtons(newButtons);
-  //   setFaqData(newFaqData);
-  //   setActiveButton(newButtons[0] || "");
-
-  //   setOpenDeleteDialog(false);
-  // };
+ 
 
   return (
     <Box

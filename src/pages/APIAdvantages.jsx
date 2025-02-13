@@ -1,12 +1,89 @@
-import React, { useState } from "react";
-import { Box, TextField, Button, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import API from "./icons/API";
 
-const APIAdvantages= ({ darkMode }) => {
-  const [activeTab, setActiveTab] = useState("One");
+const APIAdvantages = ({ darkMode }) => {
+  const [activeTab, setActiveTab] = useState(0);
+  const [apiData, setApiData] = useState({
+    titleAr: "",
+    titleEn: "",
+    descriptionAr: "",
+    descriptionEn: "",
+    image: "",
+  });
 
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const apiEndpoints = [
+    "https://cms-i47k.onrender.com/api-page/api-advatages/1",
+    "https://cms-i47k.onrender.com/api-page/api-advatages/2",
+    "https://cms-i47k.onrender.com/api-page/api-advatages/3",
+    "https://cms-i47k.onrender.com/api-page/api-advatages/4",
+  ];
+
+  // جلب البيانات عند تحميل الصفحة أو عند تغيير التبويبة
+  useEffect(() => {
+    axios
+      .get(apiEndpoints[activeTab])
+      .then((response) => {
+        const { title, description, image } = response.data;
+        setApiData({
+          titleAr: title.ar || "",
+          titleEn: title.en || "",
+          descriptionAr: description.ar || "",
+          descriptionEn: description.en || "",
+          image: image || "",
+        });
+      })
+      .catch(() => {
+        setSnackbar({ open: true, message: "Failed to load data", severity: "error" });
+      });
+  }, [activeTab]);
+
+  // تحديث القيم عند التغيير في الإدخال
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setApiData({ ...apiData, [name]: value });
+  };
+
+  // تحويل الصورة إلى Base64 عند اختيارها
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setApiData({ ...apiData, image: reader.result }); // حفظ الصورة كـ Base64
+    };
+  };
+
+  // إرسال البيانات إلى API
+  const handleSave = () => {
+    axios
+      .patch(apiEndpoints[activeTab], {
+        title: { ar: apiData.titleAr, en: apiData.titleEn },
+        description: { ar: apiData.descriptionAr, en: apiData.descriptionEn },
+        image: apiData.image, // إرسال الصورة كـ Base64
+      })
+      .then(() => {
+        setSnackbar({ open: true, message: "Data updated successfully!", severity: "success" });
+      })
+      .catch(() => {
+        setSnackbar({ open: true, message: "Failed to update data", severity: "error" });
+      });
   };
 
   return (
@@ -18,46 +95,29 @@ const APIAdvantages= ({ darkMode }) => {
         borderRadius: "12px",
       }}
     >
-      {/* Page Title */}
+      {/* عنوان الصفحة */}
       <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-        <API/>
+        <API />
         <Typography variant="h6" component="h1">
-          Api Page / APIAdvantages
+          API Page / API Advantages
         </Typography>
       </Box>
 
-      {/* Tabs */}
-      <Box
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 2,
-          mb: 3,
-        }}
-      >
-        {["One", "Two", "Three", "Four", "Five", "Six", "Seven"].map((tab) => (
+      {/* الأزرار */}
+      <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
+        {["One", "Two", "Three", "Four"].map((tab, index) => (
           <Button
             key={tab}
-            onClick={() => handleTabClick(tab)}
+            onClick={() => setActiveTab(index)}
             sx={{
               borderRadius: "8px",
-              background:
-                activeTab === tab
-                  ? "var(--primary-purple, #9022FF)"
-                  : darkMode
-                  ? "#131D32"
-                  : "#f5f5f5",
-              color: activeTab === tab ? "#fff" : darkMode ? "#fff" : "#000",
+              background: activeTab === index ? "#9022FF" : darkMode ? "#131D32" : "#f5f5f5",
+              color: activeTab === index ? "#fff" : darkMode ? "#fff" : "#000",
               fontWeight: "bold",
-              padding: { xs: "8px 16px", sm: "10px 20px" },
+              padding: "10px 20px",
               textTransform: "none",
               "&:hover": {
-                background:
-                  activeTab === tab
-                    ? "var(--primary-purple, #9022FF)"
-                    : darkMode
-                    ? "#1E2A40"
-                    : "#e0e0e0",
+                background: activeTab === index ? "#9022FF" : darkMode ? "#1E2A40" : "#e0e0e0",
               },
             }}
           >
@@ -66,139 +126,51 @@ const APIAdvantages= ({ darkMode }) => {
         ))}
       </Box>
 
-      {/* Input Fields */}
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-          gap: 2,
-          mb: 3,
-        }}
-      >
-        <TextField
-          label="Title (Arabic)"
-          placeholder="\u0627\u0643\u062a\u0628 \u0647\u0646\u0627"
-          multiline
-          rows={2}
-          InputProps={{
-            style: { color: darkMode ? "#fff" : "#000" },
-          }}
-          InputLabelProps={{
-            style: { color: darkMode ? "#fff" : "#000" },
-          }}
-          sx={{
-            backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
-            borderRadius: "12px",
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: darkMode ? "#4B6A9B" : "#ccc",
-              },
-              "&:hover fieldset": {
-                borderColor: "#FF2A66",
-              },
-            },
-          }}
-        />
-        <TextField
-          label="Title (English)"
-          placeholder="Write here"
-          multiline
-          rows={2}
-          InputProps={{
-            style: { color: darkMode ? "#fff" : "#000" },
-          }}
-          InputLabelProps={{
-            style: { color: darkMode ? "#fff" : "#000" },
-          }}
-          sx={{
-            backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
-            borderRadius: "12px",
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: darkMode ? "#4B6A9B" : "#ccc",
-              },
-              "&:hover fieldset": {
-                borderColor: "#FF2A66",
-              },
-            },
-          }}
-        />
+      {/* الحقول */}
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2, mb: 3 }}>
+        <TextField label="Title (Arabic)" name="titleAr" value={apiData.titleAr} onChange={handleChange} multiline rows={2} />
+        <TextField label="Title (English)" name="titleEn" value={apiData.titleEn} onChange={handleChange} multiline rows={2} />
+        <TextField label="Description (Arabic)" name="descriptionAr" value={apiData.descriptionAr} onChange={handleChange} multiline rows={5} />
+        <TextField label="Description (English)" name="descriptionEn" value={apiData.descriptionEn} onChange={handleChange} multiline rows={5} />
       </Box>
 
-      {/* Icons Field */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
-          borderRadius: "12px",
-          padding: "10px 15px",
-          border: `1px solid ${darkMode ? "#4B6A9B" : "#ccc"}`,
-          width: { xs: "100%", sm: "50%" },
-          "&:hover": {
-            borderColor: "#FF2A66",
-          },
-          mb: 3,
-        }}
-      >
-        <Typography
-          sx={{
-            flex: 1,
-            color: darkMode ? "#fff" : "#000",
-            fontSize: "16px",
-          }}
-        >
-          Icons
-        </Typography>
-        <Box>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="19"
-            viewBox="0 0 18 19"
-            fill="none"
-          >
-            <g clipPath="url(#clip0_4740_5203)">
-              <path
-                d="M4.34591 8.24929C2.70732 8.63893 1.48853 10.1123 1.48853 11.87C1.48853 13.9253 3.15465 15.5915 5.21004 15.5915C5.56247 15.5915 5.90373 15.5423 6.22713 15.4508M13.4178 8.24929C15.0564 8.63893 16.2749 10.1123 16.2749 11.87C16.2749 13.9253 14.6087 15.5915 12.5533 15.5915C12.2009 15.5915 11.8596 15.5423 11.5366 15.4508M13.3974 8.14844C13.3974 5.68219 11.3978 3.68262 8.93156 3.68262C6.46531 3.68262 4.46574 5.68219 4.46574 8.14844M6.35069 11.0814L8.93156 8.49231L11.5857 11.1257M8.93156 14.8472V9.80898"
-                stroke="#FF2A66"
-                strokeWidth="1.48861"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip0_4740_5203">
-                <rect
-                  width="17.8633"
-                  height="17.8633"
-                  fill="white"
-                  transform="translate(0 0.705078)"
-                />
-              </clipPath>
-            </defs>
-          </svg>
-        </Box>
+      {/* رفع الصورة وعرضها */}
+      <Box sx={{ mb: 3 }}>
+        <input type="file" accept="image/*" onChange={handleImageChange} />
+        {apiData.image && (
+          <Box mt={2}>
+            <Typography>Preview:</Typography>
+            <img
+              src={apiData.image}
+              alt="Uploaded Preview"
+              style={{ width: "150px", height: "150px", borderRadius: "8px" }}
+            />
+          </Box>
+        )}
       </Box>
 
-      {/* Save Button */}
+      {/* زر الحفظ */}
       <Button
+        onClick={handleSave}
         variant="contained"
         sx={{
           borderRadius: "12px",
-          padding: { xs: "8px 16px", sm: "10px 20px" },
-          background:
-            "linear-gradient(238deg, #E9BA00 -48.58%, #FF2A66 59.6%)",
+          padding: "10px 20px",
+          background: "linear-gradient(238deg, #E9BA00 -48.58%, #FF2A66 59.6%)",
           color: "#fff",
           fontWeight: "bold",
-          "&:hover": {
-            background:
-              "linear-gradient(238deg, #FF2A66 -48.58%, #E9BA00 59.6%)",
-          },
+          "&:hover": { background: "linear-gradient(238deg, #FF2A66 -48.58%, #E9BA00 59.6%)" },
         }}
       >
         Save Changes
       </Button>
+
+      {/* رسالة النجاح أو الفشل */}
+      <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+        <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} sx={{ width: "100%" }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

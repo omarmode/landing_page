@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   TextField,
   Button,
   Typography,
   useTheme,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import LinkIcon from "@mui/icons-material/Link";
 
 function SocialMediaLinks({ darkMode }) {
   const theme = useTheme();
 
+  // حالة تخزين الروابط
   const [links, setLinks] = useState({
     facebook: "",
     whatsapp: "",
@@ -18,13 +22,66 @@ function SocialMediaLinks({ darkMode }) {
     telegram: "",
   });
 
+  // حالة الرسالة
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  // جلب البيانات عند تحميل المكون
+  useEffect(() => {
+    axios
+      .get("https://cms-i47k.onrender.com/social-media")
+      .then((response) => {
+        const { Facebook, WhatsApp, xWebsite, Telegram } = response.data;
+        setLinks({
+          facebook: Facebook || "",
+          whatsapp: WhatsApp || "",
+          xWebsite: xWebsite || "",
+          telegram: Telegram || "",
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching social media links:", error);
+        setSnackbar({
+          open: true,
+          message: "Failed to load social media links",
+          severity: "error",
+        });
+      });
+  }, []);
+
+  // تحديث القيم عند التغيير في الإدخال
   const handleChange = (e) => {
     const { name, value } = e.target;
     setLinks({ ...links, [name]: value });
   };
 
+  // إرسال البيانات إلى API
   const handleSave = () => {
-    console.log("Saved Links:", links);
+    axios
+      .patch("https://cms-i47k.onrender.com/social-media", {
+        Facebook: links.facebook,
+        WhatsApp: links.whatsapp,
+        xWebsite: links.xWebsite,
+        Telegram: links.telegram,
+      })
+      .then(() => {
+        setSnackbar({
+          open: true,
+          message: "Links updated successfully!",
+          severity: "success",
+        });
+      })
+      .catch((error) => {
+        console.error("Error updating links:", error);
+        setSnackbar({
+          open: true,
+          message: "Failed to update links",
+          severity: "error",
+        });
+      });
   };
 
   return (
@@ -102,6 +159,21 @@ function SocialMediaLinks({ darkMode }) {
       >
         Save Changes
       </Button>
+
+      {/* رسالة النجاح أو الفشل */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
