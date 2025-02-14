@@ -20,12 +20,12 @@
   
   /* الخلفية الخاصة بالكارد الأخضر */
   .main-card-green {
-    background: var(--primary-bg---card, #050a17);
+    background: var(--primary-bg---card ,#050A17);
   }
   
   /* الخلفية الخاصة بالكارد الأصفر */
   .main-card-yellow {
-    background: var(--primary-bg---card, #090f21);
+    background: var(--primary-bg---card, #050A17);
   }
   
   /* التأثير الضوئي */

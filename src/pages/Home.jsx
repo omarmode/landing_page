@@ -23,7 +23,8 @@ function Home({ darkMode }) {
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
-    height: '100vh',
+    // direction: 'rtl',
+    height: isMobile ? 'auto' : '100vh',
     padding: '20px',
     paddingTop: isMobile ? '100px' : '60px',
     color: '#ffffff',
@@ -108,6 +109,8 @@ function Home({ darkMode }) {
     color: '#ffffff', // لون النص
     fontSize: '16px',
     textTransform: 'none', 
+    fontFamily: 'Tajawal, sans-serif',
+    fontWeight: 500,
     '&:hover': {
       background: 'linear-gradient(67deg, #E9BA00 -10%, #FF2A66 50%)', 
       fontFamily: 'Tajawal, sans-serif',
