@@ -9,8 +9,7 @@ const AccordionPage1 = () => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
 
-  // ✅ تخزين الأسئلة
-  const [faqs, setFaqs] = useState([]);
+  const [faqs, setFaqs] = useState([]); // ✅ تخزين جميع الأسئلة
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expanded, setExpanded] = useState(false);
@@ -18,54 +17,40 @@ const AccordionPage1 = () => {
   useEffect(() => {
     const fetchFAQs = async () => {
       try {
-        console.log("🔍 جلب أول 4 أسئلة...");
+        console.log("🔍 جلب جميع الأسئلة المتاحة...");
 
-        // ✅ جلب الأسئلة الثابتة (1,2,3,4)
-        const orders = [1, 2, 3, 4];
-        const responses = await Promise.all(
-          orders.map((order) =>
-            axios.get(`/api-page/faq/${order}`).then((res) => res.data)
-          )
-        );
+        let fetchedFAQs = [];
+        let order = 1;
+        let emptyRequests = 0;
+        const maxEmptyRequests = 10; // ⛔ عدد المحاولات الفارغة قبل التوقف
 
-        // ✅ فلترة الأسئلة التي تحتوي على بيانات فقط
-        const validFAQs = responses.filter((faq) => faq.title?.ar && faq.description?.ar);
-        setFaqs(validFAQs);
-        console.log("✅ الأسئلة الأولية بعد الفلترة:", validFAQs);
-
-        // ✅ البحث عن أسئلة إضافية
-        let additionalFAQs = [];
-        let order = 5;
-        let hasMore = true;
-
-        while (hasMore) {
+        while (emptyRequests < maxEmptyRequests) {
           try {
             console.log(`🔎 محاولة جلب السؤال ${order}...`);
             const response = await axios.get(`/api-page/faq/${order}`);
 
-            // ✅ فقط إضافة السؤال إذا كان يحتوي على بيانات
             if (response.data.title?.ar && response.data.description?.ar) {
-              additionalFAQs.push(response.data);
+              fetchedFAQs.push(response.data);
               console.log(`✅ تم العثور على السؤال ${order}`);
+              emptyRequests = 0; // ✅ تصفير العدّاد عند العثور على بيانات
             } else {
               console.log(`⛔ السؤال ${order} فارغ، سيتم تجاهله.`);
-              hasMore = false; // ✅ التوقف عند أول سؤال فارغ
+              emptyRequests++; // ⬆️ زيادة عدد المحاولات الفاشلة
             }
-
-            order++; // ✅ الانتقال للسؤال التالي
           } catch (error) {
-            console.log(`⛔ لا يوجد سؤال برقم ${order}، التوقف.`);
-            hasMore = false;
+            console.log(`⛔ لا يوجد سؤال برقم ${order}، المحاولة (${emptyRequests + 1}/${maxEmptyRequests})`);
+            emptyRequests++; // ⬆️ زيادة عدد المحاولات الفاشلة
           }
+
+          order++; // ✅ الانتقال للسؤال التالي
         }
 
-        // ✅ إضافة الأسئلة الإضافية إذا وجدت
-        if (additionalFAQs.length > 0) {
-          setFaqs((prevFaqs) => [...prevFaqs, ...additionalFAQs]);
-          console.log("📢 جميع الأسئلة بعد إضافة الأسئلة الإضافية:", [
-            ...validFAQs,
-            ...additionalFAQs,
-          ]);
+        // ✅ حفظ البيانات بعد الانتهاء
+        if (fetchedFAQs.length > 0) {
+          setFaqs(fetchedFAQs);
+          console.log("📢 جميع الأسئلة بعد البحث:", fetchedFAQs);
+        } else {
+          setError("❌ لا توجد بيانات متاحة");
         }
       } catch (err) {
         console.error("❌ خطأ أثناء جلب الأسئلة:", err);

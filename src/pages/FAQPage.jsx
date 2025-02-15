@@ -32,42 +32,43 @@ const FAQPage = ({ darkMode }) => {
       let order = 1;
       let fetchedData = {};
       let fetchedButtons = [];
+      let maxEmptyRequests = 3; // عدد محاولات فارغة قبل التوقف
+      let emptyRequests = 0;
   
-      while (true) {
+      while (emptyRequests < maxEmptyRequests) {
         try {
           const response = await axios.get(`/landing-page/faq/${order}`);
   
-          // ✅ تأكد من أن الطلب يحتوي على بيانات قبل إضافته
           if (!response.data || !response.data._id) {
-            console.error(`🚫 No valid data found for order ${order}. Stopping...`);
-            break;
+            console.warn(`🚫 No valid data for order ${order}, skipping...`);
+            emptyRequests++;
+          } else {
+            console.log(`✅ Order ${order} fetched:`, response.data);
+            const buttonName = toWords(order).replace(/^\w/, (c) => c.toUpperCase());
+            fetchedButtons.push(buttonName);
+            fetchedData[buttonName] = {
+              questionArabic: response.data.title.ar || "",
+              questionEnglish: response.data.title.en || "",
+              answerArabic: response.data.description.ar || "",
+              answerEnglish: response.data.description.en || "",
+            };
+            emptyRequests = 0; // إعادة تعيين العدّاد عند العثور على بيانات صالحة
           }
-  
-          console.log(`✅ Order ${order} fetched:`, response.data);
-  
-          const buttonName = toWords(order).replace(/^\w/, (c) => c.toUpperCase());
-          fetchedButtons.push(buttonName);
-          fetchedData[buttonName] = {
-            questionArabic: response.data.title.ar || "",
-            questionEnglish: response.data.title.en || "",
-            answerArabic: response.data.description.ar || "",
-            answerEnglish: response.data.description.en || "",
-          };
-  
-          order++; // الانتقال إلى الطلب التالي
         } catch (error) {
-          console.error(`🚫 No data found for order ${order}. Stopping...`);
-          break; // ✅ إيقاف الحلقة عند الخطأ
+          console.error(`🚫 Error fetching order ${order}, skipping...`);
+          emptyRequests++;
         }
+        order++; // متابعة الطلبات حتى لو كان هناك طلب فارغ
       }
   
       setButtons(fetchedButtons);
       setFaqData(fetchedData);
-      setActiveButton(fetchedButtons.length > 0 ? fetchedButtons[0] : ""); // ✅ إصلاح الزر الأول
+      setActiveButton(fetchedButtons.length > 0 ? fetchedButtons[0] : "");
     };
   
     fetchAllOrders();
   }, []);
+  
   
   
   const handleSave = async () => {
@@ -122,17 +123,17 @@ const FAQPage = ({ darkMode }) => {
   };
   
   const handleAddButton = async () => {
-    const nextNumber = buttons.length + 1;
-    const newButtonName = toWords(nextNumber).replace(/^\w/, (c) => c.toUpperCase());
-  
     try {
       const response = await axios.post(`/landing-page/faq`, {
-        title: { ar: "", en: "" },
-        description: { ar: "", en: "" },
-        order: nextNumber, // رقم الطلب الجديد
+        title: { ar: "عنوان جديد", en: "New Title" }, // وضع قيمة افتراضية
+        description: { ar: "إجابة جديدة", en: "New Answer" }, // وضع قيمة افتراضية
+        IsViewd: true, // إضافة هذا الحقل كما هو مطلوب من الخادم
       });
   
-      console.log(`✅ New order ${nextNumber} added:`, response.data);
+      const newOrder = response.data.order; // الحصول على رقم الطلب الجديد من الخادم
+      const newButtonName = toWords(newOrder).replace(/^\w/, (c) => c.toUpperCase());
+  
+      console.log(`✅ New FAQ added with order ${newOrder}:`, response.data);
   
       setButtons((prevButtons) => [...prevButtons, newButtonName]);
       setFaqData((prevFaqData) => ({
@@ -140,12 +141,22 @@ const FAQPage = ({ darkMode }) => {
         [newButtonName]: { questionArabic: "", questionEnglish: "", answerArabic: "", answerEnglish: "" },
       }));
       setActiveButton(newButtonName);
+  
       alert("✅ تم إضافة سؤال جديد بنجاح!");
     } catch (error) {
-      console.error(`🚫 Error adding new order ${nextNumber}:`, error);
-      alert("❌ فشل في إضافة السؤال الجديد!");
+      console.error(`🚫 Error adding new FAQ:`, error);
+  
+      if (error.response) {
+        console.error("📌 Server Full Response:", error.response.data);
+        alert(`❌ فشل في إضافة السؤال الجديد! التفاصيل: ${JSON.stringify(error.response.data)}`);
+      } else {
+        alert("❌ فشل في إضافة السؤال الجديد! تحقق من الاتصال بالخادم.");
+      }
     }
   };
+  
+  
+  
   
 
   const handleInputChange = (field, value) => {
