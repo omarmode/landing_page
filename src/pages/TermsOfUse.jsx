@@ -1,135 +1,183 @@
-import React, { useState } from "react";
-import { Box, Typography, Button } from "@mui/material";
-import "react-quill/dist/quill.snow.css"; // استيراد أنماط ReactQuill
-import ReactQuill from "react-quill";
-import { styled } from "@mui/system";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Box, Typography, Button, Snackbar, Alert } from "@mui/material";
+import { RichTextEditor } from "@mantine/rte"; // ✅ استبدال ReactQuill بـ RichTextEditor من Mantine
 
-function TermsOfUse({darkMode}) {
-    const [descriptionArabic, setDescriptionArabic] = useState("");
-    const [descriptionEnglish, setDescriptionEnglish] = useState("");
-  
-    // إعدادات شريط الأدوات
-    const modules = {
-      toolbar: {
-        container: [
-          ["bold", "italic", "underline", "strike"], // التنسيق
-          [{ header: 1 }, { header: 2 }], // العناوين
-          [{ list: "ordered" }, { list: "bullet" }], // القوائم
-          [{ align: [] }], // المحاذاة
-          ["link"], // الروابط
-          ["undo", "redo"], // التراجع
-        ],
-      },
-    };
-  
-    // تخصيص المحرر مع شريط الأدوات أسفله
-    const EditorContainer = styled("div")({
-      display: "flex",
-      flexDirection: "column-reverse", // عكس الاتجاه لجعل شريط الأدوات بالأسفل
-      borderRadius: "12px",
-      backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
-      "& .ql-container": {
-        minHeight: "150px",
-        border: "none",
-        padding: "10px",
-        color: darkMode ? "#fff" : "#000",
-      },
-      "& .ql-toolbar": {
-        borderTop: "1px solid",
-        borderColor: darkMode ? "#333" : "#ddd",
-        backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
-        borderRadius: "12px 12px 0 0", // حواف علوية دائرية فقط
-      },
-    });
+// ✅ تعيين `baseURL` حتى لا تحتاج لكتابة الرابط كاملًا في كل مرة
+axios.defaults.baseURL = "https://cms-i47k.onrender.com";
+
+const TermsOfUse = ({ darkMode }) => {
+  const [descriptionArabic, setDescriptionArabic] = useState("");
+  const [descriptionEnglish, setDescriptionEnglish] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // ✅ جلب البيانات عند تحميل الصفحة (GET)
+  useEffect(() => {
+    axios
+      .get("/terms-of-use")
+      .then((response) => {
+        console.log("✅ Data fetched:", response.data);
+        if (response.data && response.data.description) {
+          setDescriptionArabic(response.data.description.ar || "");
+          setDescriptionEnglish(response.data.description.en || "");
+        }
+      })
+      .catch((error) => console.error("❌ Error fetching data:", error));
+  }, []);
+
+  // ✅ إرسال البيانات عند الضغط على "Save Changes" (PATCH)
+  const handleSave = async () => {
+    console.log("🔹 handleSave function called!");
+    setLoading(true);
+
+    try {
+      const response = await axios.patch("/terms-of-use", {
+        title: {
+          ar: "البطاقات الرقمية أصبحت أسهل وأوفر",
+          en: "Digital Cards Made Easier and More Affordable",
+        },
+        description: {
+          ar: descriptionArabic,
+          en: descriptionEnglish,
+        },
+        image: "your-image-url-here",
+      });
+
+      console.log("✅ Success:", response.data);
+
+      if (response.data.modifiedCount > 0) {
+        setOpenSnackbar(true);
+      } else {
+        alert("⚠️ لم يتم تعديل أي بيانات، تأكد من تغيير المحتوى قبل الحفظ.");
+      }
+    } catch (error) {
+      console.error("❌ Error updating terms:", error.response?.data || error);
+      alert("❌ فشل التحديث! تحقق من الاتصال بالإنترنت.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ إغلاق `Snackbar`
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
   return (
     <Box
-    sx={{
-      p: 4,
-      borderRadius: "12px",
-      backgroundColor: darkMode ? "#050A17" : "#fff",
-      color: darkMode ? "#fff" : "#000",
-      minHeight: "100vh",
-    }}
-  >
-    {/* العنوان */}
-    <Typography
-      variant="h6"
-      component="h1"
       sx={{
-        mb: 3,
-        fontWeight: "bold",
-        color: darkMode ? "#FF2A66" : "#E91E63",
+        p: 4,
+        borderRadius: "12px",
+        backgroundColor: darkMode ? "#050A17" : "#fff",
+        color: darkMode ? "#fff" : "#000",
+        minHeight: "100vh",
       }}
     >
-      Terms Of Use
-    </Typography>
+      {/* ✅ العنوان */}
+      <Typography
+        variant="h6"
+        component="h1"
+        sx={{
+          mb: 3,
+          fontWeight: "bold",
+          color: darkMode ? "#FF2A66" : "#E91E63",
+        }}
+      >
+        Terms Of Use
+      </Typography>
 
-    {/* المحرر الأول (Arabic) */}
-    <Typography
-      variant="body1"
-      sx={{
-        mb: 1,
-        fontWeight: "bold",
-        color: darkMode ? "#ccc" : "#555",
-      }}
-    >
-      Description (Arabic)
-    </Typography>
-    <EditorContainer>
-      <ReactQuill
+      {/* ✅ المحرر الأول (Arabic) */}
+      <Typography
+        variant="body1"
+        sx={{
+          mb: 1,
+          fontWeight: "bold",
+          color: darkMode ? "#ccc" : "#555",
+        }}
+      >
+        Description (Arabic)
+      </Typography>
+      <RichTextEditor
         value={descriptionArabic}
         onChange={setDescriptionArabic}
-        modules={modules}
-        theme="snow"
-        placeholder="اكتب هنا..."
+        sx={{
+          borderRadius: "12px",
+          backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
+          color: darkMode ? "#fff" : "#000",
+          minHeight: "150px",
+        }}
+        controls={[
+          ["bold", "italic", "underline", "strike"],
+          ["h1", "h2", "h3"],
+          ["unorderedList", "orderedList"],
+          ["alignLeft", "alignCenter", "alignRight"],
+          ["link"],
+        ]}
       />
-    </EditorContainer>
 
-    {/* المحرر الثاني (English) */}
-    <Typography
-      variant="body1"
-      sx={{
-        mt: 3,
-        mb: 1,
-        fontWeight: "bold",
-        color: darkMode ? "#ccc" : "#555",
-      }}
-    >
-      Description (English)
-    </Typography>
-    <EditorContainer>
-      <ReactQuill
+      {/* ✅ المحرر الثاني (English) */}
+      <Typography
+        variant="body1"
+        sx={{
+          mt: 3,
+          mb: 1,
+          fontWeight: "bold",
+          color: darkMode ? "#ccc" : "#555",
+        }}
+      >
+        Description (English)
+      </Typography>
+      <RichTextEditor
         value={descriptionEnglish}
         onChange={setDescriptionEnglish}
-        modules={modules}
-        theme="snow"
-        placeholder="Write here..."
+        sx={{
+          borderRadius: "12px",
+          backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
+          color: darkMode ? "#fff" : "#000",
+          minHeight: "150px",
+        }}
+        controls={[
+          ["bold", "italic", "underline", "strike"],
+          ["h1", "h2", "h3"],
+          ["unorderedList", "orderedList"],
+          ["alignLeft", "alignCenter", "alignRight"],
+          ["link"],
+        ]}
       />
-    </EditorContainer>
 
-    {/* زر الحفظ */}
-    <Button
-      variant="contained"
-      sx={{
-        mt: 4,
-        borderRadius: "12px",
-        padding: "10px 20px",
-        background: "linear-gradient(238deg, #E9BA00 -48.58%, #FF2A66 59.6%)",
-        color: "#fff",
-        fontWeight: "bold",
-        "&:hover": {
-          background: "linear-gradient(238deg, #FF2A66 -48.58%, #E9BA00 59.6%)",
-        },
-      }}
-      onClick={() => {
-        console.log("Arabic:", descriptionArabic);
-        console.log("English:", descriptionEnglish);
-      }}
-    >
-      Save Changes
-    </Button>
-  </Box>
-  )
-}
+      {/* ✅ زر الحفظ */}
+      <Button
+        variant="contained"
+        sx={{
+          mt: 4,
+          borderRadius: "12px",
+          padding: "10px 20px",
+          background: "linear-gradient(238deg, #E9BA00 -48.58%, #FF2A66 59.6%)",
+          color: "#fff",
+          fontWeight: "bold",
+          "&:hover": {
+            background: "linear-gradient(238deg, #FF2A66 -48.58%, #E9BA00 59.6%)",
+          },
+        }}
+        onClick={handleSave}
+        disabled={loading}
+      >
+        {loading ? "Saving..." : "Save Changes"}
+      </Button>
 
-export default TermsOfUse
+      {/* ✅ Snackbar لإظهار نجاح العملية */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success">
+          ✅ تم حفظ التغييرات بنجاح!
+        </Alert>
+      </Snackbar>
+    </Box>
+  );
+};
+
+export default TermsOfUse;

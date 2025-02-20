@@ -1,46 +1,67 @@
-import React, { useState } from "react";
-import { Box, Typography, Button } from "@mui/material";
-import "react-quill/dist/quill.snow.css"; // استيراد أنماط ReactQuill
-import ReactQuill from "react-quill";
-import { styled } from "@mui/system";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Box, Typography, Button, Snackbar, Alert } from "@mui/material";
+import { RichTextEditor } from "@mantine/rte"; // استيراد المحرر الجديد من Mantine
+
+// ✅ تعيين `baseURL` لتجنب كتابة الرابط في كل استدعاء
+axios.defaults.baseURL = "https://cms-i47k.onrender.com";
 
 const AboutUsPage = ({ darkMode }) => {
   const [descriptionArabic, setDescriptionArabic] = useState("");
   const [descriptionEnglish, setDescriptionEnglish] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // إعدادات شريط الأدوات
-  const modules = {
-    toolbar: {
-      container: [
-        ["bold", "italic", "underline", "strike"], // التنسيق
-        [{ header: 1 }, { header: 2 }], // العناوين
-        [{ list: "ordered" }, { list: "bullet" }], // القوائم
-        [{ align: [] }], // المحاذاة
-        ["link"], // الروابط
-        ["undo", "redo"], // التراجع
-      ],
-    },
+  // ✅ جلب البيانات عند تحميل الصفحة
+  useEffect(() => {
+    axios
+      .get("/about-us")
+      .then((response) => {
+        if (response.data && response.data.description) {
+          setDescriptionArabic(response.data.description.ar || "");
+          setDescriptionEnglish(response.data.description.en || "");
+        }
+      })
+      .catch((error) => console.error("❌ Error fetching data:", error));
+  }, []);
+
+  // ✅ إرسال البيانات عند الضغط على "Save Changes"
+  const handleSave = async () => {
+    console.log("🔹 handleSave function called!");
+
+    setLoading(true);
+    try {
+      const response = await axios.patch("/about-us", {
+        title: {
+          ar: "من نحن",
+          en: "About Us",
+        },
+        description: {
+          ar: descriptionArabic,
+          en: descriptionEnglish,
+        },
+        image: "about-us-image-url",
+      });
+
+      console.log("✅ Success:", response.data);
+
+      if (response.data.modifiedCount > 0) {
+        setOpenSnackbar(true);
+      } else {
+        alert("⚠️ لم يتم تعديل أي بيانات، تأكد من تغيير المحتوى قبل الحفظ.");
+      }
+    } catch (error) {
+      console.error("❌ Error updating:", error.response?.data || error);
+      alert("❌ فشل التحديث! تحقق من الاتصال بالإنترنت.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // تخصيص المحرر مع شريط الأدوات أسفله
-  const EditorContainer = styled("div")({
-    display: "flex",
-    flexDirection: "column-reverse", // عكس الاتجاه لجعل شريط الأدوات بالأسفل
-    borderRadius: "12px",
-    backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
-    "& .ql-container": {
-      minHeight: "150px",
-      border: "none",
-      padding: "10px",
-      color: darkMode ? "#fff" : "#000",
-    },
-    "& .ql-toolbar": {
-      borderTop: "1px solid",
-      borderColor: darkMode ? "#333" : "#ddd",
-      backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
-      borderRadius: "12px 12px 0 0", // حواف علوية دائرية فقط
-    },
-  });
+  // ✅ إغلاق `Snackbar`
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   return (
     <Box
@@ -52,7 +73,7 @@ const AboutUsPage = ({ darkMode }) => {
         minHeight: "100vh",
       }}
     >
-      {/* العنوان */}
+      {/* ✅ العنوان */}
       <Typography
         variant="h6"
         component="h1"
@@ -65,7 +86,7 @@ const AboutUsPage = ({ darkMode }) => {
         About Us
       </Typography>
 
-      {/* المحرر الأول (Arabic) */}
+      {/* ✅ المحرر الأول (Arabic) */}
       <Typography
         variant="body1"
         sx={{
@@ -76,17 +97,25 @@ const AboutUsPage = ({ darkMode }) => {
       >
         Description (Arabic)
       </Typography>
-      <EditorContainer>
-        <ReactQuill
-          value={descriptionArabic}
-          onChange={setDescriptionArabic}
-          modules={modules}
-          theme="snow"
-          placeholder="اكتب هنا..."
-        />
-      </EditorContainer>
+      <RichTextEditor
+        value={descriptionArabic}
+        onChange={setDescriptionArabic}
+        sx={{
+          borderRadius: "12px",
+          backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
+          color: darkMode ? "#fff" : "#000",
+          minHeight: "150px",
+        }}
+        controls={[
+          ["bold", "italic", "underline", "strike"],
+          ["h1", "h2", "h3"],
+          ["unorderedList", "orderedList"],
+          ["alignLeft", "alignCenter", "alignRight"],
+          ["link"],
+        ]}
+      />
 
-      {/* المحرر الثاني (English) */}
+      {/* ✅ المحرر الثاني (English) */}
       <Typography
         variant="body1"
         sx={{
@@ -98,17 +127,25 @@ const AboutUsPage = ({ darkMode }) => {
       >
         Description (English)
       </Typography>
-      <EditorContainer>
-        <ReactQuill
-          value={descriptionEnglish}
-          onChange={setDescriptionEnglish}
-          modules={modules}
-          theme="snow"
-          placeholder="Write here..."
-        />
-      </EditorContainer>
+      <RichTextEditor
+        value={descriptionEnglish}
+        onChange={setDescriptionEnglish}
+        sx={{
+          borderRadius: "12px",
+          backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
+          color: darkMode ? "#fff" : "#000",
+          minHeight: "150px",
+        }}
+        controls={[
+          ["bold", "italic", "underline", "strike"],
+          ["h1", "h2", "h3"],
+          ["unorderedList", "orderedList"],
+          ["alignLeft", "alignCenter", "alignRight"],
+          ["link"],
+        ]}
+      />
 
-      {/* زر الحفظ */}
+      {/* ✅ زر الحفظ */}
       <Button
         variant="contained"
         sx={{
@@ -122,13 +159,22 @@ const AboutUsPage = ({ darkMode }) => {
             background: "linear-gradient(238deg, #FF2A66 -48.58%, #E9BA00 59.6%)",
           },
         }}
-        onClick={() => {
-          console.log("Arabic:", descriptionArabic);
-          console.log("English:", descriptionEnglish);
-        }}
+        onClick={handleSave}
+        disabled={loading}
       >
-        Save Changes
+        {loading ? "Saving..." : "Save Changes"}
       </Button>
+
+      {/* ✅ Snackbar لإظهار نجاح العملية */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success">
+          ✅ تم حفظ التغييرات بنجاح!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

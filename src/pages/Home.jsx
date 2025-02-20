@@ -12,9 +12,11 @@ import FeatureSection from './FeatureSection';
 import Footer from './Footer';
 
 function Home({ darkMode }) {
+
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
 
    <>
@@ -143,7 +145,8 @@ function Home({ darkMode }) {
 <SecondSection />
 <ThirdSection/>
 <FourdSection/>
-<StepsPage/>
+<StepsPage darkMode={darkMode} />
+
 <NewPage />
 <StyledPage/>
 <AccordionPage />

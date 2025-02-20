@@ -1,11 +1,82 @@
-import React, { useState } from "react";
-import { Box, TextField, Button, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 
 const Categories = ({ darkMode }) => {
   const [activeTab, setActiveTab] = useState("One");
+  const [categoryData, setCategoryData] = useState({
+    titleAr: "",
+    titleEn: "",
+    descriptionAr: "",
+    descriptionEn: "",
+  });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
+  // جلب البيانات عند تحميل المكون
+  useEffect(() => {
+    axios
+      .get("https://cms-i47k.onrender.com/landing-page/categories/6")
+      .then((response) => {
+        const { title, description } = response.data;
+        setCategoryData({
+          titleAr: title.ar || "",
+          titleEn: title.en || "",
+          descriptionAr: description.ar || "",
+          descriptionEn: description.en || "",
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching category:", error);
+        setSnackbar({
+          open: true,
+          message: "Failed to load category data",
+          severity: "error",
+        });
+      });
+  }, []);
+
+  // تحديث القيم عند التغيير في الإدخال
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCategoryData({ ...categoryData, [name]: value });
+  };
+
+  // إرسال البيانات إلى API
+  const handleSave = () => {
+    axios
+      .patch("https://cms-i47k.onrender.com/landing-page/categories/6", {
+        title: { ar: categoryData.titleAr, en: categoryData.titleEn },
+        description: {
+          ar: categoryData.descriptionAr,
+          en: categoryData.descriptionEn,
+        },
+      })
+      .then(() => {
+        setSnackbar({
+          open: true,
+          message: "Category updated successfully!",
+          severity: "success",
+        });
+      })
+      .catch((error) => {
+        console.error("Error updating category:", error);
+        setSnackbar({
+          open: true,
+          message: "Failed to update category",
+          severity: "error",
+        });
+      });
   };
 
   return (
@@ -17,7 +88,7 @@ const Categories = ({ darkMode }) => {
         borderRadius: "12px",
       }}
     >
-      {/* Page Title */}
+      {/* عنوان الصفحة */}
       <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
         <Typography variant="h6" component="h1">
           Landing Page / Categories
@@ -36,12 +107,12 @@ const Categories = ({ darkMode }) => {
         {["One", "Two", "Three", "Four", "Five", "Six", "Seven"].map((tab) => (
           <Button
             key={tab}
-            onClick={() => handleTabClick(tab)}
+            onClick={() => setActiveTab(tab)}
             sx={{
               borderRadius: "8px",
               background:
                 activeTab === tab
-                  ? "var(--primary-purple, #9022FF)"
+                  ? "#9022FF"
                   : darkMode
                   ? "#131D32"
                   : "#f5f5f5",
@@ -50,12 +121,7 @@ const Categories = ({ darkMode }) => {
               padding: { xs: "8px 16px", sm: "10px 20px" },
               textTransform: "none",
               "&:hover": {
-                background:
-                  activeTab === tab
-                    ? "var(--primary-purple, #9022FF)"
-                    : darkMode
-                    ? "#1E2A40"
-                    : "#e0e0e0",
+                background: activeTab === tab ? "#9022FF" : darkMode ? "#1E2A40" : "#e0e0e0",
               },
             }}
           >
@@ -64,7 +130,7 @@ const Categories = ({ darkMode }) => {
         ))}
       </Box>
 
-      {/* Input Fields */}
+      {/* حقول الإدخال */}
       <Box
         sx={{
           display: "grid",
@@ -75,9 +141,12 @@ const Categories = ({ darkMode }) => {
       >
         <TextField
           label="Title (Arabic)"
-          placeholder="\u0627\u0643\u062a\u0628 \u0647\u0646\u0627"
+          placeholder="اكتب هنا"
           multiline
           rows={2}
+          name="titleAr"
+          value={categoryData.titleAr}
+          onChange={handleChange}
           InputProps={{
             style: { color: darkMode ? "#fff" : "#000" },
           }}
@@ -88,12 +157,8 @@ const Categories = ({ darkMode }) => {
             backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
             borderRadius: "12px",
             "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: darkMode ? "#4B6A9B" : "#ccc",
-              },
-              "&:hover fieldset": {
-                borderColor: "#FF2A66",
-              },
+              "& fieldset": { borderColor: darkMode ? "#4B6A9B" : "#ccc" },
+              "&:hover fieldset": { borderColor: "#FF2A66" },
             },
           }}
         />
@@ -102,6 +167,9 @@ const Categories = ({ darkMode }) => {
           placeholder="Write here"
           multiline
           rows={2}
+          name="titleEn"
+          value={categoryData.titleEn}
+          onChange={handleChange}
           InputProps={{
             style: { color: darkMode ? "#fff" : "#000" },
           }}
@@ -112,91 +180,45 @@ const Categories = ({ darkMode }) => {
             backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
             borderRadius: "12px",
             "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: darkMode ? "#4B6A9B" : "#ccc",
-              },
-              "&:hover fieldset": {
-                borderColor: "#FF2A66",
-              },
+              "& fieldset": { borderColor: darkMode ? "#4B6A9B" : "#ccc" },
+              "&:hover fieldset": { borderColor: "#FF2A66" },
             },
           }}
         />
       </Box>
 
-      {/* Icons Field */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
-          borderRadius: "12px",
-          padding: "10px 15px",
-          border: `1px solid ${darkMode ? "#4B6A9B" : "#ccc"}`,
-          width: { xs: "100%", sm: "50%" },
-          "&:hover": {
-            borderColor: "#FF2A66",
-          },
-          mb: 3,
-        }}
-      >
-        <Typography
-          sx={{
-            flex: 1,
-            color: darkMode ? "#fff" : "#000",
-            fontSize: "16px",
-          }}
-        >
-          Icons
-        </Typography>
-        <Box>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="19"
-            viewBox="0 0 18 19"
-            fill="none"
-          >
-            <g clipPath="url(#clip0_4740_5203)">
-              <path
-                d="M4.34591 8.24929C2.70732 8.63893 1.48853 10.1123 1.48853 11.87C1.48853 13.9253 3.15465 15.5915 5.21004 15.5915C5.56247 15.5915 5.90373 15.5423 6.22713 15.4508M13.4178 8.24929C15.0564 8.63893 16.2749 10.1123 16.2749 11.87C16.2749 13.9253 14.6087 15.5915 12.5533 15.5915C12.2009 15.5915 11.8596 15.5423 11.5366 15.4508M13.3974 8.14844C13.3974 5.68219 11.3978 3.68262 8.93156 3.68262C6.46531 3.68262 4.46574 5.68219 4.46574 8.14844M6.35069 11.0814L8.93156 8.49231L11.5857 11.1257M8.93156 14.8472V9.80898"
-                stroke="#FF2A66"
-                strokeWidth="1.48861"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip0_4740_5203">
-                <rect
-                  width="17.8633"
-                  height="17.8633"
-                  fill="white"
-                  transform="translate(0 0.705078)"
-                />
-              </clipPath>
-            </defs>
-          </svg>
-        </Box>
-      </Box>
-
-      {/* Save Button */}
+      {/* زر الحفظ */}
       <Button
+        onClick={handleSave}
         variant="contained"
         sx={{
           borderRadius: "12px",
           padding: { xs: "8px 16px", sm: "10px 20px" },
-          background:
-            "linear-gradient(238deg, #E9BA00 -48.58%, #FF2A66 59.6%)",
+          background: "linear-gradient(238deg, #E9BA00 -48.58%, #FF2A66 59.6%)",
           color: "#fff",
           fontWeight: "bold",
           "&:hover": {
-            background:
-              "linear-gradient(238deg, #FF2A66 -48.58%, #E9BA00 59.6%)",
+            background: "linear-gradient(238deg, #FF2A66 -48.58%, #E9BA00 59.6%)",
           },
         }}
       >
         Save Changes
       </Button>
+
+      {/* رسالة النجاح أو الفشل */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

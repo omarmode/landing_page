@@ -1,57 +1,143 @@
-import React, { useState } from "react";
-import { Box, TextField, Button, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 
+const Safety = ({ darkMode }) => {
+  const [activeCard, setActiveCard] = useState(0);
+  const [safetyData, setSafetyData] = useState({
+    titleAr: "",
+    titleEn: "",
+    descriptionAr: "",
+    descriptionEn: "",
+    imageUrl: "",
+  });
 
-function Safety({darkMode}) {
-    const [activeCard, setActiveCard] = useState("First Card");
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
-  const handleCardClick = (card) => {
-    setActiveCard(card);
+  const safetyEndpoints = [
+    "https://cms-i47k.onrender.com/landing-page/saftey/1",
+    "https://cms-i47k.onrender.com/landing-page/saftey/2",
+    "https://cms-i47k.onrender.com/landing-page/saftey/3",
+  ];
+
+  // جلب البيانات عند تحميل الصفحة أو عند تغيير التبويبة
+  useEffect(() => {
+    axios
+      .get(safetyEndpoints[activeCard])
+      .then((response) => {
+        const { title, description } = response.data;
+        setSafetyData({
+          titleAr: title.ar || "",
+          titleEn: title.en || "",
+          descriptionAr: description.ar || "",
+          descriptionEn: description.en || "",
+          imageUrl: response.data.imageUrl || "",
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching safety data:", error);
+        setSnackbar({
+          open: true,
+          message: "Failed to load data",
+          severity: "error",
+        });
+      });
+  }, [activeCard]);
+
+  // تحديث القيم عند التغيير في الإدخال
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSafetyData({ ...safetyData, [name]: value });
   };
+
+  // تحديث الصورة عند التغيير
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const reader = new FileReader();
+    reader.readAsDataURL(file); // ✅ تحويل الصورة إلى Base64
+    reader.onloadend = () => {
+      setSafetyData({ ...safetyData, image: reader.result }); // ✅ حفظ Base64 في state
+    };
+  };
+  
+  
+
+  // إرسال البيانات إلى API
+  const handleSave = () => {
+    axios
+      .patch(`https://cms-i47k.onrender.com/landing-page/saftey/${activeCard + 1}`, {
+        title: { ar: safetyData.titleAr, en: safetyData.titleEn },
+        description: { ar: safetyData.descriptionAr, en: safetyData.descriptionEn },
+        image: safetyData.image, // ✅ إرسال الصورة كـ Base64 string
+      }, {
+        headers: { "Content-Type": "application/json" }, // ✅ التأكد من أن البيانات ترسل كـ JSON
+      })
+      .then(() => {
+        setSnackbar({ open: true, message: "Safety data updated successfully!", severity: "success" });
+      })
+      .catch(() => {
+        setSnackbar({ open: true, message: "Failed to update data", severity: "error" });
+      });
+  };
+  
+  
+
   return (
     <Box
-    sx={{
-      padding: 3,
-      backgroundColor: darkMode ? "#050A17" : "#fff",
-      color: darkMode ? "#fff" : "#000",
-      borderRadius: "12px",
-    }}
-  >
-    {/* العنوان */}
-    <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-      <Typography variant="h6" component="h1">
-        Landing Page /  Safety
-      </Typography>
-    </Box>
-
-    {/* الأزرار */}
-    <Box
       sx={{
-        display: "flex",
-        gap: 2,
-        mb: 3,
+        padding: 3,
+        backgroundColor: darkMode ? "#050A17" : "#fff",
+        color: darkMode ? "#fff" : "#000",
+        borderRadius: "12px",
       }}
     >
-      {["First Card", "Second Card", "Third Card", "Fourth Card"].map(
-        (card) => (
+      {/* العنوان */}
+      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+        <Typography variant="h6" component="h1">
+          Landing Page / Safety
+        </Typography>
+      </Box>
+
+      {/* الأزرار */}
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          mb: 3,
+        }}
+      >
+        {["First Card", "Second Card", "Third Card"].map((card, index) => (
           <Button
             key={card}
-            onClick={() => handleCardClick(card)}
+            onClick={() => setActiveCard(index)}
             sx={{
               borderRadius: "8px",
               background:
-                activeCard === card
+                activeCard === index
                   ? "var(--primary-purple, #9022FF)"
                   : darkMode
                   ? "#131D32"
                   : "#f5f5f5",
-              color: activeCard === card ? "#fff" : darkMode ? "#fff" : "#000",
+              color: activeCard === index ? "#fff" : darkMode ? "#fff" : "#000",
               fontWeight: "bold",
               padding: "10px 20px",
               textTransform: "none",
               "&:hover": {
                 background:
-                  activeCard === card
+                  activeCard === index
                     ? "var(--primary-purple, #9022FF)"
                     : darkMode
                     ? "#1E2A40"
@@ -61,196 +147,103 @@ function Safety({darkMode}) {
           >
             {card}
           </Button>
-        )
-      )}
-    </Box>
+        ))}
+      </Box>
 
-    {/* الحقول */}
-    <Box
-      sx={{
-        display: "grid",
-        gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-        gap: 2,
-        mb: 3,
-      }}
-    >
-      <TextField
-        label="Title (Arabic)"
-        placeholder="اكتب هنا"
-        multiline
-        rows={3}
-        InputProps={{
-          style: { color: darkMode ? "#fff" : "#000" },
-        }}
-        InputLabelProps={{
-          style: { color: darkMode ? "#fff" : "#000" },
-        }}
+      {/* الحقول */}
+      <Box
         sx={{
-          backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
-          borderRadius: "12px",
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-              borderColor: darkMode ? "#4B6A9B" : "#ccc",
-            },
-            "&:hover fieldset": {
-              borderColor: "#FF2A66",
-            },
-          },
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+          gap: 2,
+          mb: 3,
         }}
-      />
-      <TextField
-        label="Title (English)"
-        placeholder="Write here"
-        multiline
-        rows={3}
-        InputProps={{
-          style: { color: darkMode ? "#fff" : "#000" },
-        }}
-        InputLabelProps={{
-          style: { color: darkMode ? "#fff" : "#000" },
-        }}
-        sx={{
-          backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
-          borderRadius: "12px",
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-              borderColor: darkMode ? "#4B6A9B" : "#ccc",
-            },
-            "&:hover fieldset": {
-              borderColor: "#FF2A66",
-            },
-          },
-        }}
-      />
-      <TextField
-        label="Description (Arabic)"
-        placeholder="اكتب هنا"
-        multiline
-        rows={5}
-        InputProps={{
-          style: { color: darkMode ? "#fff" : "#000" },
-        }}
-        InputLabelProps={{
-          style: { color: darkMode ? "#fff" : "#000" },
-        }}
-        sx={{
-          backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
-          borderRadius: "12px",
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-              borderColor: darkMode ? "#4B6A9B" : "#ccc",
-            },
-            "&:hover fieldset": {
-              borderColor: "#FF2A66",
-            },
-          },
-        }}
-      />
-      <TextField
-        label="Description (English)"
-        placeholder="Write here"
-        multiline
-        rows={5}
-        InputProps={{
-          style: { color: darkMode ? "#fff" : "#000" },
-        }}
-        InputLabelProps={{
-          style: { color: darkMode ? "#fff" : "#000" },
-        }}
-        sx={{
-          backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
-          borderRadius: "12px",
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-              borderColor: darkMode ? "#4B6A9B" : "#ccc",
-            },
-            "&:hover fieldset": {
-              borderColor: "#FF2A66",
-            },
-          },
-        }}
-      />
-    </Box>
-    <Box
-sx={{
-  display: "flex",
-  alignItems: "center",
-  backgroundColor: darkMode ? "#131D32" : "#f5f5f5",
-  borderRadius: "12px",
-  padding: "10px 15px",
-  border: `1px solid ${darkMode ? "#4B6A9B" : "#ccc"}`,
-  width: "50%", // عرض الحقل نصف المساحة
-  "&:hover": {
-    borderColor: "#FF2A66",
-  },
-  mb: 3, // مساحة أسفل الحقل
-}}
->
-{/* النص داخل الحقل */}
-<Typography
-  sx={{
-    flex: 1,
-    color: darkMode ? "#fff" : "#000",
-    fontSize: "16px",
-  }}
->
-  Icons
-</Typography>
-
-{/* الأيقونة في الجهة اليمنى */}
-<Box>
-  {/* استبدل هذه الأيقونة بأيقونتك */}
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="19"
-    viewBox="0 0 18 19"
-    fill="none"
-  >
-    <g clipPath="url(#clip0_4740_5203)">
-      <path
-        d="M4.34591 8.24929C2.70732 8.63893 1.48853 10.1123 1.48853 11.87C1.48853 13.9253 3.15465 15.5915 5.21004 15.5915C5.56247 15.5915 5.90373 15.5423 6.22713 15.4508M13.4178 8.24929C15.0564 8.63893 16.2749 10.1123 16.2749 11.87C16.2749 13.9253 14.6087 15.5915 12.5533 15.5915C12.2009 15.5915 11.8596 15.5423 11.5366 15.4508M13.3974 8.14844C13.3974 5.68219 11.3978 3.68262 8.93156 3.68262C6.46531 3.68262 4.46574 5.68219 4.46574 8.14844M6.35069 11.0814L8.93156 8.49231L11.5857 11.1257M8.93156 14.8472V9.80898"
-        stroke="#FF2A66"
-        strokeWidth="1.48861"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </g>
-    <defs>
-      <clipPath id="clip0_4740_5203">
-        <rect
-          width="17.8633"
-          height="17.8633"
-          fill="white"
-          transform="translate(0 0.705078)"
+      >
+        <TextField
+          label="Title (Arabic)"
+          name="titleAr"
+          value={safetyData.titleAr}
+          onChange={handleChange}
+          multiline
+          rows={3}
         />
-      </clipPath>
-    </defs>
-  </svg>
-</Box>
+        <TextField
+          label="Title (English)"
+          name="titleEn"
+          value={safetyData.titleEn}
+          onChange={handleChange}
+          multiline
+          rows={3}
+        />
+        <TextField
+          label="Description (Arabic)"
+          name="descriptionAr"
+          value={safetyData.descriptionAr}
+          onChange={handleChange}
+          multiline
+          rows={5}
+        />
+        <TextField
+          label="Description (English)"
+          name="descriptionEn"
+          value={safetyData.descriptionEn}
+          onChange={handleChange}
+          multiline
+          rows={5}
+        />
+      </Box>
+
+      {/* رفع الصورة وعرضها */}
+      <Box sx={{ mb: 3 }}>
+  <input type="file" accept="image/*" onChange={handleImageChange} />
+  {safetyData.image && (
+    <Box mt={2}>
+      <Typography>Preview:</Typography>
+      <img
+        src={safetyData.image}
+        alt="Uploaded Preview"
+        style={{ width: "150px", height: "150px", borderRadius: "8px" }}
+      />
+    </Box>
+  )}
 </Box>
 
-
-    {/* زر الحفظ */}
-    <Button
-      variant="contained"
-      sx={{
-        borderRadius: "12px",
-        padding: "10px 20px",
-        background:
-          "linear-gradient(238deg, #E9BA00 -48.58%, #FF2A66 59.6%)",
-        color: "#fff",
-        fontWeight: "bold",
-        "&:hover": {
+      {/* زر الحفظ */}
+      <Button
+        onClick={handleSave}
+        variant="contained"
+        sx={{
+          borderRadius: "12px",
+          padding: "10px 20px",
           background:
-            "linear-gradient(238deg, #FF2A66 -48.58%, #E9BA00 59.6%)",
-        },
-      }}
-    >
-      Save Changes
-    </Button>
-  </Box>
-  )
-}
+            "linear-gradient(238deg, #E9BA00 -48.58%, #FF2A66 59.6%)",
+          color: "#fff",
+          fontWeight: "bold",
+          "&:hover": {
+            background:
+              "linear-gradient(238deg, #FF2A66 -48.58%, #E9BA00 59.6%)",
+          },
+        }}
+      >
+        Save Changes
+      </Button>
 
-export default Safety
+      {/* رسالة النجاح أو الفشل */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </Box>
+  );
+};
+
+export default Safety;

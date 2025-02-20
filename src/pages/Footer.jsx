@@ -184,10 +184,12 @@ const Footer = () => {
 >
   سياسة الخصوصية
 </Link>
-            <Link href="#" color="inherit" underline="none" display="block" sx={{ marginBottom: '8px', fontWeight: '400', fontSize:{ xs: '14px', md: '16px' }, fontFamily: 'Tajawal'  }}>
-              شروط الاستخدام
-            </Link>
-            <Link href="#" color="inherit" underline="none" display="block" sx={{ marginBottom: '8px', fontWeight: '400', fontSize:{ xs: '14px', md: '16px' }, fontFamily: 'Tajawal' }}>
+
+<Link href="/terms-ofuse" color="inherit" underline="none" display="block" sx={{ marginBottom: '8px' }}>
+  شروط الاستخدام
+</Link>
+            <Link href="#" color="inherit" underline="none" display="block" sx={{ marginBottom: '8px' }}>
+
               خدمة API
             </Link>
             <Link href="#" color="inherit" underline="none" display="block" sx={{ marginBottom: '8px', fontWeight: '400', fontSize:{ xs: '14px', md: '16px' }, fontFamily: 'Tajawal' }}>

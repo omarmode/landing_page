@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+
 import {
   Box,
   TextField,
@@ -14,7 +14,8 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toWords } from "number-to-words";
-
+import { useEffect, useState } from "react";
+import axios from "axios";
 const FAQPage = ({ darkMode }) => {
   const [buttons, setButtons] = useState(["One"]);
   const [activeButton, setActiveButton] = useState("One");
@@ -26,17 +27,137 @@ const FAQPage = ({ darkMode }) => {
   const handleActiveButtonChange = (_, newActiveButton) => {
     if (newActiveButton !== null) setActiveButton(newActiveButton);
   };
-
-  const handleAddButton = () => {
-    const nextNumber = buttons.length + 1;
-    const newButtonName = toWords(nextNumber).replace(/^\w/, (c) => c.toUpperCase());
-    setButtons((prevButtons) => [...prevButtons, newButtonName]);
-    setFaqData((prevFaqData) => ({
-      ...prevFaqData,
-      [newButtonName]: { questionArabic: "", questionEnglish: "", answerArabic: "", answerEnglish: "" },
-    }));
-    setActiveButton(newButtonName);
+  useEffect(() => {
+    const fetchAllOrders = async () => {
+      let order = 1;
+      let fetchedData = {};
+      let fetchedButtons = [];
+      let maxEmptyRequests = 3; // عدد محاولات فارغة قبل التوقف
+      let emptyRequests = 0;
+  
+      while (emptyRequests < maxEmptyRequests) {
+        try {
+          const response = await axios.get(`/landing-page/faq/${order}`);
+  
+          if (!response.data || !response.data._id) {
+            console.warn(`🚫 No valid data for order ${order}, skipping...`);
+            emptyRequests++;
+          } else {
+            console.log(`✅ Order ${order} fetched:`, response.data);
+            const buttonName = toWords(order).replace(/^\w/, (c) => c.toUpperCase());
+            fetchedButtons.push(buttonName);
+            fetchedData[buttonName] = {
+              questionArabic: response.data.title.ar || "",
+              questionEnglish: response.data.title.en || "",
+              answerArabic: response.data.description.ar || "",
+              answerEnglish: response.data.description.en || "",
+            };
+            emptyRequests = 0; // إعادة تعيين العدّاد عند العثور على بيانات صالحة
+          }
+        } catch (error) {
+          console.error(`🚫 Error fetching order ${order}, skipping...`);
+          emptyRequests++;
+        }
+        order++; // متابعة الطلبات حتى لو كان هناك طلب فارغ
+      }
+  
+      setButtons(fetchedButtons);
+      setFaqData(fetchedData);
+      setActiveButton(fetchedButtons.length > 0 ? fetchedButtons[0] : "");
+    };
+  
+    fetchAllOrders();
+  }, []);
+  
+  
+  
+  const handleSave = async () => {
+    if (!activeButton || !faqData[activeButton]) return;
+  
+    const order = buttons.indexOf(activeButton) + 1; // حساب رقم الطلب
+    
+    try {
+      const response = await axios.patch(`/landing-page/faq/${order}`, {
+        title: {
+          ar: faqData[activeButton].questionArabic,
+          en: faqData[activeButton].questionEnglish,
+        },
+        description: {
+          ar: faqData[activeButton].answerArabic,
+          en: faqData[activeButton].answerEnglish,
+        },
+      });
+  
+      console.log(`✅ Data for order ${order} updated successfully:`, response.data);
+      alert("✅ تم حفظ التعديلات بنجاح!");
+    } catch (error) {
+      console.error(`🚫 Error updating order ${order}:`, error);
+      alert("❌ فشل في حفظ التعديلات!");
+    }
   };
+  
+  const handleDeleteQuestion = async () => {
+    if (!activeButton) return;
+  
+    const order = buttons.indexOf(activeButton) + 1; // حساب رقم الطلب
+  
+    try {
+      await axios.delete(`/landing-page/faq/${order}`);
+      console.log(`🗑️ Order ${order} deleted successfully!`);
+      
+      // حذف الزر من الواجهة
+      const newButtons = buttons.filter((btn) => btn !== activeButton);
+      const newFaqData = { ...faqData };
+      delete newFaqData[activeButton];
+  
+      setButtons(newButtons);
+      setFaqData(newFaqData);
+      setActiveButton(newButtons[0] || "");
+  
+      setOpenDeleteDialog(false);
+      alert("✅ تم حذف السؤال بنجاح!");
+    } catch (error) {
+      console.error(`🚫 Error deleting order ${order}:`, error);
+      alert("❌ فشل في حذف السؤال!");
+    }
+  };
+  
+  const handleAddButton = async () => {
+    try {
+      const response = await axios.post(`/landing-page/faq`, {
+        title: { ar: "عنوان جديد", en: "New Title" }, // وضع قيمة افتراضية
+        description: { ar: "إجابة جديدة", en: "New Answer" }, // وضع قيمة افتراضية
+        IsViewd: true, // إضافة هذا الحقل كما هو مطلوب من الخادم
+      });
+  
+      const newOrder = response.data.order; // الحصول على رقم الطلب الجديد من الخادم
+      const newButtonName = toWords(newOrder).replace(/^\w/, (c) => c.toUpperCase());
+  
+      console.log(`✅ New FAQ added with order ${newOrder}:`, response.data);
+  
+      setButtons((prevButtons) => [...prevButtons, newButtonName]);
+      setFaqData((prevFaqData) => ({
+        ...prevFaqData,
+        [newButtonName]: { questionArabic: "", questionEnglish: "", answerArabic: "", answerEnglish: "" },
+      }));
+      setActiveButton(newButtonName);
+  
+      alert("✅ تم إضافة سؤال جديد بنجاح!");
+    } catch (error) {
+      console.error(`🚫 Error adding new FAQ:`, error);
+  
+      if (error.response) {
+        console.error("📌 Server Full Response:", error.response.data);
+        alert(`❌ فشل في إضافة السؤال الجديد! التفاصيل: ${JSON.stringify(error.response.data)}`);
+      } else {
+        alert("❌ فشل في إضافة السؤال الجديد! تحقق من الاتصال بالخادم.");
+      }
+    }
+  };
+  
+  
+  
+  
 
   const handleInputChange = (field, value) => {
     setFaqData((prevFaqData) => ({
@@ -45,17 +166,7 @@ const FAQPage = ({ darkMode }) => {
     }));
   };
 
-  const handleDeleteQuestion = () => {
-    const newButtons = buttons.filter((btn) => btn !== activeButton);
-    const newFaqData = { ...faqData };
-    delete newFaqData[activeButton];
-
-    setButtons(newButtons);
-    setFaqData(newFaqData);
-    setActiveButton(newButtons[0] || "");
-
-    setOpenDeleteDialog(false);
-  };
+ 
 
   return (
     <Box
@@ -210,6 +321,7 @@ const FAQPage = ({ darkMode }) => {
 
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Button
+        onClick={handleSave}
           variant="contained"
           sx={{
             borderRadius: "12px",
@@ -221,7 +333,7 @@ const FAQPage = ({ darkMode }) => {
               background: "linear-gradient(238deg, #FF2A66 -48.58%, #E9BA00 59.6%)",
             },
           }}
-          onClick={() => console.log(faqData)}
+          
         >
           Save Changes
         </Button>
