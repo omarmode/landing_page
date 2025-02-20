@@ -9,6 +9,7 @@ import {
   Alert,
 } from "@mui/material";
 import API from "./icons/API";
+import { axiosInstance } from "../axios/axios";
 
 const APIAdvantages = ({ darkMode }) => {
   const [activeTab, setActiveTab] = useState(0);
@@ -27,16 +28,16 @@ const APIAdvantages = ({ darkMode }) => {
   });
 
   const apiEndpoints = [
-    "https://cms-i47k.onrender.com/api-page/api-advatages/1",
-    "https://cms-i47k.onrender.com/api-page/api-advatages/2",
-    "https://cms-i47k.onrender.com/api-page/api-advatages/3",
-    "https://cms-i47k.onrender.com/api-page/api-advatages/4",
+    "api-page/api-advatages/1",
+    "api-page/api-advatages/2",
+    "api-page/api-advatages/3",
+    "api-page/api-advatages/4",
   ];
 
   // جلب البيانات عند تحميل الصفحة أو عند تغيير التبويبة
   useEffect(() => {
-    axios
-      .get(apiEndpoints[activeTab])
+    axiosInstance
+      .get(`/${apiEndpoints[activeTab]}`)
       .then((response) => {
         const { title, description, image } = response.data;
         setApiData({
@@ -72,8 +73,8 @@ const APIAdvantages = ({ darkMode }) => {
 
   // إرسال البيانات إلى API
   const handleSave = () => {
-    axios
-      .patch(apiEndpoints[activeTab], {
+    axiosInstance
+      .patch((`/${apiEndpoints[activeTab]}`), {
         title: { ar: apiData.titleAr, en: apiData.titleEn },
         description: { ar: apiData.descriptionAr, en: apiData.descriptionEn },
         image: apiData.image, // إرسال الصورة كـ Base64

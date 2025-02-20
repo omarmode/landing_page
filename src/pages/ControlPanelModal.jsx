@@ -3,28 +3,46 @@ import { Modal, Box, Typography, Button, TextField, InputAdornment, IconButton }
 import Logo from './icons/Logo';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import {  url } from '../axios/axios';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const ControlPanelModal = ({ isOpen, handleClose, theme }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // لتبديل رؤية كلمة المرور
-
+  const [showPassword, setShowPassword] = useState(false);  
   const modalBackgroundColor = theme === 'dark' ? '#00040F' : '#F5F5F5';
   const inputBackgroundColor = theme === 'dark' ? '#050A17' : '#FFFFFF';
   const buttonBackground = 'linear-gradient(238deg, #E9BA00 -48.58%, #FF2A66 59.6%)';
+  const navigate = useNavigate()
 
-  // عداد الكلمات
   const handleEmailChange = (event) => {
     const input = event.target.value;
-    if (input.length <= 20) {
+    
       setEmail(input);
-    }
+    
   };
 
-  // تبديل رؤية كلمة المرور
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+ async function handleLogin() {
+  if (!email) return alert("Email is required");
+  if (!password) return alert("Password is required");
+
+  try {
+    await axios.post(
+      `${url}/auth/signin`,
+      { email, password },
+      { headers: { "x-app-token": "OKPIN" } }
+    );
+    alert( "Hello, Login Successful!" );
+    navigate('/dashboard')
+  } catch (error) {
+    alert("Date wrong !")
+  }
+}
 
   return (
     <Modal
@@ -39,11 +57,11 @@ const ControlPanelModal = ({ isOpen, handleClose, theme }) => {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 700,
+          width: { md: "70%" ,xs:"90%"},
           bgcolor: modalBackgroundColor,
           borderRadius: '20px',
           boxShadow: 24,
-          p: 4,
+          paddingY: 4,
         }}
       >
         {/* شعار */}
@@ -55,7 +73,7 @@ const ControlPanelModal = ({ isOpen, handleClose, theme }) => {
           <Logo />
         </Typography>
 
-        <Box sx={{ width: '70%', mx: 'auto' }}> {/* المحتوى 70% عرض */}
+        <Box sx={ { width: '90%', mx: 'auto' }}> 
           {/* الحقول */}
           <Box sx={{ mb: 3 }}>
             <Typography variant="body1" sx={{ mb: 1, fontWeight: 'bold' }}>
@@ -75,7 +93,9 @@ const ControlPanelModal = ({ isOpen, handleClose, theme }) => {
                   position: 'relative',
                 },
               }}
-              InputProps={{
+ 
+              InputProps={ {
+                style: { color: theme === 'dark'?"white":"black" },
                 endAdornment: (
                   <InputAdornment position="end">
                     <Typography
@@ -85,7 +105,7 @@ const ControlPanelModal = ({ isOpen, handleClose, theme }) => {
                         fontSize: '12px',
                       }}
                     >
-                      {email.length}/20
+                      {email.length}/22
                     </Typography>
                   </InputAdornment>
                 ),
@@ -111,7 +131,8 @@ const ControlPanelModal = ({ isOpen, handleClose, theme }) => {
                   height: '60px',
                 },
               }}
-              InputProps={{
+              InputProps={ {
+                style: { color: theme === 'dark'?"white":"black" },
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
@@ -140,7 +161,8 @@ const ControlPanelModal = ({ isOpen, handleClose, theme }) => {
                 fontWeight: 'bold',
                 mb: 2,
                 '&:hover': { opacity: 0.9 },
-              }}
+              } }
+              onClick={handleLogin}
             >
               Login
             </Button>

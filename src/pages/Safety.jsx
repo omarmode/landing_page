@@ -8,7 +8,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-
+import { axiosInstance } from "../axios/axios";
 const Safety = ({ darkMode }) => {
   const [activeCard, setActiveCard] = useState(0);
   const [safetyData, setSafetyData] = useState({
@@ -26,15 +26,15 @@ const Safety = ({ darkMode }) => {
   });
 
   const safetyEndpoints = [
-    "https://cms-i47k.onrender.com/landing-page/saftey/1",
-    "https://cms-i47k.onrender.com/landing-page/saftey/2",
-    "https://cms-i47k.onrender.com/landing-page/saftey/3",
+    "landing-page/saftey/1",
+    "landing-page/saftey/2",
+    "landing-page/saftey/3",
   ];
 
   // جلب البيانات عند تحميل الصفحة أو عند تغيير التبويبة
   useEffect(() => {
-    axios
-      .get(safetyEndpoints[activeCard])
+    axiosInstance
+      .get(`${safetyEndpoints[activeCard]}`)
       .then((response) => {
         const { title, description } = response.data;
         setSafetyData({
@@ -77,8 +77,8 @@ const Safety = ({ darkMode }) => {
 
   // إرسال البيانات إلى API
   const handleSave = () => {
-    axios
-      .patch(`https://cms-i47k.onrender.com/landing-page/saftey/${activeCard + 1}`, {
+    axiosInstance
+      .patch(`/landing-page/saftey/${activeCard + 1}`, {
         title: { ar: safetyData.titleAr, en: safetyData.titleEn },
         description: { ar: safetyData.descriptionAr, en: safetyData.descriptionEn },
         image: safetyData.image, // ✅ إرسال الصورة كـ Base64 string

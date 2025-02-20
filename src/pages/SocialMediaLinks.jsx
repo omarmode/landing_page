@@ -10,10 +10,10 @@ import {
   Alert,
 } from "@mui/material";
 import LinkIcon from "@mui/icons-material/Link";
+import { axiosInstance } from "../axios/axios";
 
 function SocialMediaLinks({ darkMode }) {
   const theme = useTheme();
-
   // حالة تخزين الروابط
   const [links, setLinks] = useState({
     facebook: "",
@@ -31,8 +31,8 @@ function SocialMediaLinks({ darkMode }) {
 
   // جلب البيانات عند تحميل المكون
   useEffect(() => {
-    axios
-      .get("https://cms-i47k.onrender.com/social-media")
+    axiosInstance
+      .get("/social-media")
       .then((response) => {
         const { Facebook, WhatsApp, xWebsite, Telegram } = response.data;
         setLinks({
@@ -60,8 +60,8 @@ function SocialMediaLinks({ darkMode }) {
 
   // إرسال البيانات إلى API
   const handleSave = () => {
-    axios
-      .patch("https://cms-i47k.onrender.com/social-media", {
+    axiosInstance
+      .patch("/social-media", {
         Facebook: links.facebook,
         WhatsApp: links.whatsapp,
         xWebsite: links.xWebsite,

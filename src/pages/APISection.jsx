@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
-import axios from "axios";
+import { axiosInstance } from "../axios/axios";
 
 function APISection({ darkMode }) {
   const [formData, setFormData] = useState({
@@ -11,12 +11,10 @@ function APISection({ darkMode }) {
     image: "",
   });
 
-  const [previewImage, setPreviewImage] = useState(""); // لمعاينة الصورة
-
-  // ✅ **جلب البيانات عند تحميل الصفحة**
+  const [previewImage, setPreviewImage] = useState("");
   useEffect(() => {
-    axios
-      .get("https://cms-i47k.onrender.com/landing-page/api-section")
+    axiosInstance
+      .get("/landing-page/api-section")
       .then((response) => {
         const data = response.data;
         setFormData({
@@ -58,7 +56,12 @@ function APISection({ darkMode }) {
       try {
         const uploadResponse = await axios.post(
           "https://api.imgbb.com/1/upload?key=YOUR_IMGBB_API_KEY", // 🔹 استخدم مفتاح API الصحيح
-          formDataImage
+          formDataImage,
+            {
+    headers: {
+      "x-app-token": import.meta.env.VITE_BASE_URL, 
+    }
+  }
         );
   
         const imageUrl = uploadResponse.data.data.url;
@@ -78,8 +81,8 @@ function APISection({ darkMode }) {
       image: formData.image, // 🔥 إرسال الصورة كرابط `string`
     };
 
-    axios
-      .patch("https://cms-i47k.onrender.com/landing-page/api-section", updatedData, {
+    axiosInstance
+      .patch("/landing-page/api-section", updatedData, {
         headers: { "Content-Type": "application/json" }, // 🔹 تأكد من إرسال JSON
       })
       .then(() => {

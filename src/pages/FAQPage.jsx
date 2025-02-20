@@ -15,7 +15,8 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toWords } from "number-to-words";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { axiosInstance } from "../axios/axios";
+
 const FAQPage = ({ darkMode }) => {
   const [buttons, setButtons] = useState(["One"]);
   const [activeButton, setActiveButton] = useState("One");
@@ -37,7 +38,7 @@ const FAQPage = ({ darkMode }) => {
   
       while (emptyRequests < maxEmptyRequests) {
         try {
-          const response = await axios.get(`/landing-page/faq/${order}`);
+          const response = await axiosInstance.get(`/landing-page/faq/${order}`);
   
           if (!response.data || !response.data._id) {
             console.warn(`🚫 No valid data for order ${order}, skipping...`);
@@ -77,7 +78,7 @@ const FAQPage = ({ darkMode }) => {
     const order = buttons.indexOf(activeButton) + 1; // حساب رقم الطلب
     
     try {
-      const response = await axios.patch(`/landing-page/faq/${order}`, {
+      const response = await axiosInstance.patch(`/landing-page/faq/${order}`, {
         title: {
           ar: faqData[activeButton].questionArabic,
           en: faqData[activeButton].questionEnglish,
@@ -102,7 +103,7 @@ const FAQPage = ({ darkMode }) => {
     const order = buttons.indexOf(activeButton) + 1; // حساب رقم الطلب
   
     try {
-      await axios.delete(`/landing-page/faq/${order}`);
+      await axiosInstance.delete(`/landing-page/faq/${order}`);
       console.log(`🗑️ Order ${order} deleted successfully!`);
       
       // حذف الزر من الواجهة
@@ -124,7 +125,7 @@ const FAQPage = ({ darkMode }) => {
   
   const handleAddButton = async () => {
     try {
-      const response = await axios.post(`/landing-page/faq`, {
+      const response = await axiosInstance.post(`/landing-page/faq`, {
         title: { ar: "عنوان جديد", en: "New Title" }, // وضع قيمة افتراضية
         description: { ar: "إجابة جديدة", en: "New Answer" }, // وضع قيمة افتراضية
         IsViewd: true, // إضافة هذا الحقل كما هو مطلوب من الخادم

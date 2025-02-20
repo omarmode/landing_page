@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Box, Typography, Button, Snackbar, Alert } from "@mui/material";
 import { RichTextEditor } from "@mantine/rte"; // استيراد المحرر الجديد من Mantine
+import { axiosInstance } from "../axios/axios";
 
-// ✅ تعيين `baseURL` لتجنب كتابة الرابط في كل استدعاء
-axios.defaults.baseURL = "https://cms-i47k.onrender.com";
+
 
 const AboutUsPage = ({ darkMode }) => {
   const [descriptionArabic, setDescriptionArabic] = useState("");
@@ -14,7 +14,7 @@ const AboutUsPage = ({ darkMode }) => {
 
   // ✅ جلب البيانات عند تحميل الصفحة
   useEffect(() => {
-    axios
+    axiosInstance
       .get("/about-us")
       .then((response) => {
         if (response.data && response.data.description) {
@@ -31,7 +31,7 @@ const AboutUsPage = ({ darkMode }) => {
 
     setLoading(true);
     try {
-      const response = await axios.patch("/about-us", {
+      const response = await axiosInstance.patch("/about-us", {
         title: {
           ar: "من نحن",
           en: "About Us",

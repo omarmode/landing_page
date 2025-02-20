@@ -2,28 +2,8 @@ import React from 'react';
 import { Box, Card, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
-function StyledPage() {
+function StyledPage({category,language,safety}) {
   const theme = useTheme();
-
-  const CardOne = [
-    { imgSrc: '../../public/Property 1=4.png', text: "بطاقات الألعاب" },
-    { imgSrc: '../../public/Group.png', text: "بطاقات الألعاب" },
-    { imgSrc: '../../public/Mask group.png', text: "بطاقات الألعاب" },
-    { imgSrc: '../../public/Property 1=1.png', text: "بطاقات الألعاب" },
-    { imgSrc: '../../public/Property 1=2.png', text: "بطاقات الألعاب" },
-    { imgSrc: '../../public/Property 1=3.png', text: "بطاقات الألعاب" }
-  ];
-
-  const CardTwo = [
-    { imgSrc: '../../public/safe.png', text: "دفع مشفر: ", subtext: " طرق دفع آمنة تحمي بياناتك." },
-    { imgSrc: '../../public/privacy.png', text: "خصوصيتك محمية:", subtext: ".جميع معلوماتك الشخصية تظل سرية " },
-    { imgSrc: '../../public/Clip path group.png', text: "دعم مخصص: ", subtext: " فريقنا هنا لمساعدتك على مدار الساعة." }
-  ];
-
-  const bottomCard = {
-    imgSrc: '../../public/see more.png',
-    text: "عروض أخرى عديدة"
-  };
 
   return (
     <Box
@@ -62,14 +42,14 @@ function StyledPage() {
             fontFamily: '"Tajawal", sans-serif',
             fontSize: { xs: '18px', sm: '24px', md: '32px' },
             fontWeight: 500,
-            textAlign: 'right',
+            textAlign: language === "en"? "left":'right',
             marginRight: { xs: '10px', sm: '20px' },
             marginTop: { xs: '10px', sm: '20px' },
             color: 'inherit',
-            direction: 'rtl'
+          
           }}
         >
-          منتجات تناسب احتياجاتك!
+          {language === "en"?"Products that suit your needs":"منتجات تناسب احتياجاتك!"} 
         </Typography>
 
         <Box
@@ -81,11 +61,10 @@ function StyledPage() {
             padding: { xs: '0 5px', sm: '0 10px' }
           }}
         >
-          {CardOne.map((card, index) => (
+          {category?.slice(0,category?.length - 1)?.map((card, index) => (
             <Card
               key={index}
               sx={{
-              
                 width: '100%',
                 aspectRatio: '1/1',
                 minWidth: { xs: '80px', sm: '100px', md: '150px' },
@@ -127,7 +106,7 @@ function StyledPage() {
                     textAlign: 'center'
                   }}
                 >
-                  {card.text}
+                  {card?.title[language]}
                 </Typography>
               </Box>
             </Card>
@@ -176,12 +155,12 @@ function StyledPage() {
                     textAlign: 'center'
                   }}
                 >
-                  {bottomCard.text}
+                  {category && category[category?.length - 1].title[language]}
                 </Typography>
               </Box>
               <Box
                 component="img"
-                src={bottomCard.imgSrc}
+             
                 alt="Game"
                 sx={{
                   width: { xs: '40px', sm: '50px', md: '60px' },
@@ -218,15 +197,15 @@ function StyledPage() {
             fontFamily: '"Tajawal", sans-serif',
             fontSize: { xs: '18px', sm: '24px', md: '32px' },
             fontWeight: 500,
-            textAlign: 'right',
+            textAlign: language === "en"? "left":'right',
             marginRight: { xs: '10px', sm: '20px' },
             marginTop: { xs: '10px', sm: '40px' },
             marginBottom: { xs: '10px', sm: '0' },
             color: 'inherit',
-            direction: 'rtl'
+           
           }}
         >
-          الأمان أولويتنا
+          {language === "en"?"Safety is our priority":"الأمان أولويتنا"}
         </Typography>
 
         <Box
@@ -237,15 +216,13 @@ function StyledPage() {
             justifyContent: 'center',
             flex: 1,
             gap: { xs: '10px', sm: '15px', md: '10px' },
-            padding: { xs: '0 5px', sm: '0 10px' }
           }}
         >
-          {CardTwo.map((card, index) => (
+          {safety?.map((card, index) => (
             <Card
               key={index}
               sx={{
-                width: '100%',
-                maxWidth: { xs: '100%', sm: '440px', md: '480px' },
+                width: '100%',         
                 height: { xs: '100px', sm: '116px', md: '126px' },
                 borderRadius: { xs: '15px', sm: '20px' },
                 position: 'relative',
@@ -263,12 +240,12 @@ function StyledPage() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: { xs: '10px', sm: '15px', md: '0px' }
+                  gap: { xs: '10px', sm: '15px' }
                 }}
               >
                 <Box
                   component="img"
-                  src={card.imgSrc}
+                  src={card?.image}
                   alt="Game"
                   sx={{
                     width: { xs: '40px', sm: '50px', md: '60px' },
@@ -282,7 +259,7 @@ function StyledPage() {
                     flexDirection: 'column',
                     flex: 1,
                     gap: { xs: '4px', sm: '6px', md: '8px' },
-                    textAlign: 'right'
+                    textAlign:language === "en"? 'left':"right"
                   }}
                 >
                   <Typography
@@ -294,7 +271,7 @@ function StyledPage() {
                       direction: 'rtl'
                     }}
                   >
-                    {card.text}
+                    {card?.title[language]}
                   </Typography>
                   <Typography
                     sx={{
@@ -305,7 +282,8 @@ function StyledPage() {
                       direction: 'rtl'
                     }}
                   >
-                    {card.subtext}
+                     {card?.description[language]}
+                   
                   </Typography>
                 </Box>
               </Box>

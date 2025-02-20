@@ -2,7 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-
+body{
+  overflow-x: hidden !important;
+  direction: rtl;
+}
 
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -72,3 +75,8 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
+.width-img{
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+}

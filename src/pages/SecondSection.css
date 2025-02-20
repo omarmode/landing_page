@@ -57,7 +57,7 @@
 .text-section {
   flex: 1;
   padding-left: 40px;
-  direction: rtl;
+
 }
 
 .text-section h2 {

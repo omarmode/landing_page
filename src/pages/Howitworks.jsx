@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+
 import { Box, TextField, Button, Typography, Snackbar, Alert } from "@mui/material";
 import API from "./icons/API";
+import { axiosInstance } from "../axios/axios";
 
-// ✅ تعيين `baseURL` لتجنب التكرار
-axios.defaults.baseURL = "https://cms-i47k.onrender.com";
+
 
 const HowItWorks = ({ darkMode }) => {
   // ✅ حالة البطاقة النشطة
@@ -28,7 +28,7 @@ const HowItWorks = ({ darkMode }) => {
 
   // ✅ جلب البيانات عند تحميل الصفحة أو تغيير البطاقة
   useEffect(() => {
-    axios
+    axiosInstance
       .get(`/api-page/how-it-works`)
       .then((response) => {
         if (response.data && response.data.title && response.data.description) {
@@ -60,7 +60,7 @@ const HowItWorks = ({ darkMode }) => {
   // ✅ إرسال البيانات عند الضغط على "Save Changes"
   const handleSave = async () => {
     try {
-      const response = await axios.patch(`/api-page/how-it-works`, {
+      const response = await axiosInstance.patch(`/api-page/how-it-works`, {
         title: { ar: formData.titleAr, en: formData.titleEn },
         description: { ar: formData.descriptionAr.replace(/\n/g, "\\n"), en: formData.descriptionEn },
         image: formData.image, // إرسال الصورة إذا كانت متاحة

@@ -1,34 +1,29 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import { Box, Typography, IconButton } from "@mui/material";
-import parse from "html-react-parser"; // مكتبة لتحويل HTML إلى عناصر React
+import parse from "html-react-parser";
 import Facebook from "../../pages/icons/Facebook";
 import Twitter from "../../pages/icons/Twitter";
 import Whatsappicon from "../../pages/icons/Whatsappicon";
 import Telegram from "../../pages/icons/Telegram";
 import Logo from "../../pages/icons/Logo";
+import { axiosInstance } from "../../axios/axios";
+import { useQuery } from "@tanstack/react-query";
 
-const AboutUs = ({ theme }) => {
-  const [aboutData, setAboutData] = useState(null);
+const AboutUs = ({ theme,language }) => {
   const containerBackgroundColor = theme === "dark" ? "#00040F" : "#FFFFFF";
   const textColor = theme === "dark" ? "#FFFFFF" : "#000000";
-
-  useEffect(() => {
-    axios
-      .get("/about-us")
-      .then((response) => {
-        setAboutData(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching about us data:", error);
-      });
-  }, []);
+  function getAllDateAboutPage() {
+    return axiosInstance.get(`/translate/about?lang=${language}`);
+  }
+  const { data } = useQuery({
+    queryKey: ["getAllDateAboutPage", language],
+    queryFn: getAllDateAboutPage,
+  });
 
   return (
     <Box
       sx={{
         width: "100%",
-        height: "100vh",
         backgroundImage: "url(./background.png)",
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -38,12 +33,12 @@ const AboutUs = ({ theme }) => {
         alignItems: "center",
         overflow: "hidden",
         padding: "20px",
+        marginTop:"50px"
       }}
     >
       <Box
         sx={{
-          width: "70%",
-          height: "90vh",
+          width: "95%",
           backgroundColor: containerBackgroundColor,
           borderRadius: "15px",
           boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
@@ -64,11 +59,11 @@ const AboutUs = ({ theme }) => {
           sx={{
             color: "#FF2A66",
             fontWeight: "bold",
-            textAlign: "right",
+            textAlign: language ==="en"?"left":"right",
             mb: 3,
           }}
         >
-          {aboutData ? aboutData.title.ar : "جارٍ التحميل..."}
+          {data ? data?.data?.about[0]?.title[language] : "جارٍ التحميل..."}
         </Typography>
 
         <Box
@@ -78,13 +73,12 @@ const AboutUs = ({ theme }) => {
             color: textColor,
             fontSize: "16px",
             lineHeight: "1.8",
-            textAlign: "right",
+            textAlign: language ==="en"?"left":"right",
             scrollbarWidth: "none",
             "&::-webkit-scrollbar": { display: "none" },
           }}
         >
-          {/* ✅ تحويل النص من HTML إلى React مع المحافظة على التنسيق */}
-          <Typography>{aboutData ? parse(aboutData.description.ar) : "جارٍ التحميل..."}</Typography>
+          <Typography>{data ? parse(data?.data?.about[0]?.description[language]) : "جارٍ التحميل..."}</Typography>
 
           <Box
             sx={{

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+
 import { Box, TextField, Button, Typography, Snackbar, Alert } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import { axiosInstance } from "../axios/axios";
 
-// ✅ تعيين `baseURL` لتجنب تكراره
-axios.defaults.baseURL = "https://cms-i47k.onrender.com";
+
 
 const WhyOKPinAPI = ({ darkMode }) => {
   // ✅ الحالة الخاصة بالبطاقات
@@ -28,7 +28,7 @@ const WhyOKPinAPI = ({ darkMode }) => {
 
   // ✅ جلب البيانات عند تحميل الصفحة أو تغيير البطاقة
   useEffect(() => {
-    axios
+    axiosInstance
       .get(`/api-page/why-ok/${activeCard}`)
       .then((response) => {
         if (response.data && response.data.title && response.data.description) {
@@ -60,7 +60,7 @@ const WhyOKPinAPI = ({ darkMode }) => {
   // ✅ إرسال البيانات عند الضغط على "Save Changes"
   const handleSave = async () => {
     try {
-      const response = await axios.patch(`/api-page/why-ok/${activeCard}`, {
+      const response = await axiosInstance.patch(`/api-page/why-ok/${activeCard}`, {
         title: { ar: formData.titleAr, en: formData.titleEn },
         description: { ar: formData.descriptionAr, en: formData.descriptionEn },
         image: formData.image, // إرسال الصورة الحالية

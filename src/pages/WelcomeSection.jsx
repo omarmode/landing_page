@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import CloseIcon from "@mui/icons-material/Close";
+import { axiosInstance } from "../axios/axios";
 
 const WelcomeSection = ({ darkMode }) => {
   // حالة لحفظ البيانات من الـ inputs
@@ -28,12 +29,10 @@ const WelcomeSection = ({ darkMode }) => {
     severity: "success",
   });
 
-  const apiUrl = "https://cms-i47k.onrender.com/landing-page/welcome";
-
-  // **📌 جلب البيانات عند تحميل الصفحة**
+ 
   useEffect(() => {
-    axios
-      .get(apiUrl)
+    axiosInstance
+      .get(`/landing-page/welcome`)
       .then((response) => {
         const { title, description, images } = response.data;
         setFormData({
@@ -86,8 +85,8 @@ const WelcomeSection = ({ darkMode }) => {
 
   // **📌 إرسال البيانات إلى API**
   const handleSave = () => {
-    axios
-      .patch(apiUrl, {
+    axiosInstance
+      .patch(`/landing-page/welcome`, {
         title: { ar: formData.titleAr, en: formData.titleEn },
         description: { ar: formData.descriptionAr, en: formData.descriptionEn },
         images: formData.images, // إرسال الصور كـ Base64

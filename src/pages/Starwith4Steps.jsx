@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import { axiosInstance } from "../axios/axios";
 
-const API_BASE_URL = "https://cms-i47k.onrender.com/landing-page/steps";
 
 function Starwith4Steps({ darkMode }) {
   const [activeCard, setActiveCard] = useState("First Card");
@@ -27,7 +26,7 @@ function Starwith4Steps({ darkMode }) {
       try {
         const responses = await Promise.all(
           Object.values(cardOrderMapping).map((order) =>
-            axios.get(`${API_BASE_URL}/${order}`)
+            axiosInstance.get(`${API_BASE_URL}/landing-page/steps/${order}`)
           )
         );
 
@@ -65,7 +64,7 @@ function Starwith4Steps({ darkMode }) {
     try {
       const order = cardOrderMapping[activeCard];
 
-      await axios.patch(`${API_BASE_URL}/${order}`, {
+      await axiosInstance.patch(`${API_BASE_URL}/landing-page/steps/${order}`, {
         title: {
           ar: formData[activeCard].titleAr,
           en: formData[activeCard].titleEn,
@@ -156,7 +155,10 @@ function Starwith4Steps({ darkMode }) {
           name="titleAr"
           value={formData[activeCard]?.titleAr || ""}
           onChange={handleChange}
-          sx={{ backgroundColor: darkMode ? "#131D32" : "#f5f5f5", borderRadius: "12px" }}
+          sx={ { backgroundColor: darkMode ? "#131D32" : "#f5f5f5", borderRadius: "12px" } }
+                      InputProps={{
+    style: { color: darkMode?"white":"black" }
+  }}
         />
         <TextField
           label="Title (English)"
@@ -166,7 +168,10 @@ function Starwith4Steps({ darkMode }) {
           name="titleEn"
           value={formData[activeCard]?.titleEn || ""}
           onChange={handleChange}
-          sx={{ backgroundColor: darkMode ? "#131D32" : "#f5f5f5", borderRadius: "12px" }}
+          sx={ { backgroundColor: darkMode ? "#131D32" : "#f5f5f5", borderRadius: "12px" } }
+                      InputProps={{
+    style: { color: darkMode?"white":"black" }
+  }}
         />
         <TextField
           label="Description (Arabic)"
@@ -176,7 +181,10 @@ function Starwith4Steps({ darkMode }) {
           name="descriptionAr"
           value={formData[activeCard]?.descriptionAr || ""}
           onChange={handleChange}
-          sx={{ backgroundColor: darkMode ? "#131D32" : "#f5f5f5", borderRadius: "12px" }}
+          sx={ { backgroundColor: darkMode ? "#131D32" : "#f5f5f5", borderRadius: "12px" } }
+            InputProps={{
+    style: { color: darkMode?"white":"black" }
+  }}
         />
         <TextField
           label="Description (English)"
@@ -186,7 +194,10 @@ function Starwith4Steps({ darkMode }) {
           name="descriptionEn"
           value={formData[activeCard]?.descriptionEn || ""}
           onChange={handleChange}
-          sx={{ backgroundColor: darkMode ? "#131D32" : "#f5f5f5", borderRadius: "12px" }}
+          sx={ { backgroundColor: darkMode ? "#131D32" : "#f5f5f5", borderRadius: "12px" } }
+                      InputProps={{
+    style: { color: darkMode?"white":"black" }
+  }}
         />
       </Box>
 

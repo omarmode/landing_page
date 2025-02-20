@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
   Box,
   TextField,
@@ -9,6 +8,7 @@ import {
   Alert,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import { axiosInstance } from "../axios/axios";
 
 const WhyUs = ({ darkMode }) => {
   const [activeCard, setActiveCard] = useState(0);
@@ -27,16 +27,16 @@ const WhyUs = ({ darkMode }) => {
   });
 
   const whyUsEndpoints = [
-    "https://cms-i47k.onrender.com/landing-page/why-us/1",
-    "https://cms-i47k.onrender.com/landing-page/why-us/2",
-    "https://cms-i47k.onrender.com/landing-page/why-us/3",
-    "https://cms-i47k.onrender.com/landing-page/why-us/4",
+    "why-us/1",
+    "why-us/2",
+    "why-us/3",
+    "why-us/4",
   ];
 
   // جلب البيانات عند تحميل الصفحة أو عند تغيير التبويبة
   useEffect(() => {
-    axios
-      .get(whyUsEndpoints[activeCard])
+    axiosInstance
+      .get(`/landing-page/${whyUsEndpoints[activeCard]}`)
       .then((response) => {
         const { title, description, image } = response.data;
         setWhyUsData({
@@ -72,8 +72,8 @@ const WhyUs = ({ darkMode }) => {
 
   // إرسال البيانات إلى API
   const handleSave = () => {
-    axios
-      .patch(whyUsEndpoints[activeCard], {
+    axiosInstance
+      .patch( `/landing-page/${ whyUsEndpoints[ activeCard ]}`, {
         title: { ar: whyUsData.titleAr, en: whyUsData.titleEn },
         description: { ar: whyUsData.descriptionAr, en: whyUsData.descriptionEn },
         image: whyUsData.image, // إرسال الصورة كـ Base64

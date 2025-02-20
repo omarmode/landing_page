@@ -8,6 +8,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import { axiosInstance } from "../axios/axios";
 
 const Categories = ({ darkMode }) => {
   const [activeTab, setActiveTab] = useState("One");
@@ -25,8 +26,8 @@ const Categories = ({ darkMode }) => {
 
   // جلب البيانات عند تحميل المكون
   useEffect(() => {
-    axios
-      .get("https://cms-i47k.onrender.com/landing-page/categories/6")
+    axiosInstance
+      .get("/landing-page/categories/6")
       .then((response) => {
         const { title, description } = response.data;
         setCategoryData({
@@ -54,8 +55,8 @@ const Categories = ({ darkMode }) => {
 
   // إرسال البيانات إلى API
   const handleSave = () => {
-    axios
-      .patch("https://cms-i47k.onrender.com/landing-page/categories/6", {
+    axiosInstance
+      .patch("/landing-page/categories/6", {
         title: { ar: categoryData.titleAr, en: categoryData.titleEn },
         description: {
           ar: categoryData.descriptionAr,

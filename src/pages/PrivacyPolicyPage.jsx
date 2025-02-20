@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Box, Typography, Button, Snackbar, Alert } from "@mui/material";
 import { RichTextEditor } from "@mantine/rte"; // ✅ استبدال ReactQuill بـ RichTextEditor من Mantine
+import { axiosInstance } from "../axios/axios";
 
-// ✅ تعيين `baseURL` حتى لا تحتاج لكتابة الرابط كاملًا في كل مرة
-axios.defaults.baseURL = "https://cms-i47k.onrender.com";
+
 
 const PrivacyPolicyPage = ({ darkMode }) => {
   const [descriptionArabic, setDescriptionArabic] = useState("");
@@ -14,7 +13,7 @@ const PrivacyPolicyPage = ({ darkMode }) => {
 
   // ✅ جلب البيانات عند تحميل الصفحة (GET)
   useEffect(() => {
-    axios.get("/terms-of-use")
+    axiosInstance.get("/terms-of-use")
       .then((response) => {
         console.log("✅ Data fetched:", response.data);
         if (response.data && response.data.description) {
@@ -31,7 +30,7 @@ const PrivacyPolicyPage = ({ darkMode }) => {
     setLoading(true);
 
     try {
-      const response = await axios.patch("/terms-of-use", {
+      const response = await axiosInstance.patch("/terms-of-use", {
         title: {
           ar: "سياسة الخصوصية",
           en: "Privacy Policy",

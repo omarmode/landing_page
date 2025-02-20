@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Box, Typography, Button, Snackbar, Alert } from "@mui/material";
-import { RichTextEditor } from "@mantine/rte"; // ✅ استبدال ReactQuill بـ RichTextEditor من Mantine
-
-// ✅ تعيين `baseURL` حتى لا تحتاج لكتابة الرابط كاملًا في كل مرة
-axios.defaults.baseURL = "https://cms-i47k.onrender.com";
+import { RichTextEditor } from "@mantine/rte";
+import { axiosInstance } from "../axios/axios";
 
 const TermsOfUse = ({ darkMode }) => {
   const [descriptionArabic, setDescriptionArabic] = useState("");
@@ -12,9 +9,8 @@ const TermsOfUse = ({ darkMode }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // ✅ جلب البيانات عند تحميل الصفحة (GET)
   useEffect(() => {
-    axios
+    axiosInstance
       .get("/terms-of-use")
       .then((response) => {
         console.log("✅ Data fetched:", response.data);
@@ -32,7 +28,7 @@ const TermsOfUse = ({ darkMode }) => {
     setLoading(true);
 
     try {
-      const response = await axios.patch("/terms-of-use", {
+      const response = await axiosInstance.patch("/terms-of-use", {
         title: {
           ar: "البطاقات الرقمية أصبحت أسهل وأوفر",
           en: "Digital Cards Made Easier and More Affordable",

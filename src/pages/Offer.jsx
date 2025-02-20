@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Box, TextField, Button, Typography, Snackbar, Alert } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import { axiosInstance } from "../axios/axios";
 
 // ✅ تعيين `baseURL` لتجنب تكرار الرابط في كل مرة
 axios.defaults.baseURL = "https://cms-i47k.onrender.com";
@@ -19,7 +20,7 @@ const Offer = ({ darkMode }) => {
 
   // ✅ جلب البيانات عند تحميل الصفحة (GET)
   useEffect(() => {
-    axios
+    axiosInstance
       .get("/landing-page/offer")
       .then((response) => {
         console.log("✅ Data fetched:", response.data);
@@ -53,7 +54,7 @@ const Offer = ({ darkMode }) => {
     setLoading(true);
   
     try {
-      const response = await axios.patch("/landing-page/offer", requestData);
+      const response = await axiosInstance.patch("/landing-page/offer", requestData);
   
       console.log("✅ Success:", response.data);
       setOpenSnackbar(true);

@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Box, TextField, Button, Typography, Snackbar, Alert } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import { axiosInstance } from "../axios/axios";
 
-// ✅ تعيين `baseURL` حتى لا تحتاج لكتابته في كل مرة
-axios.defaults.baseURL = "https://cms-i47k.onrender.com";
 
 const HeroSection1 = ({ darkMode }) => {
   // ✅ حفظ البيانات القادمة من الـ API
@@ -24,7 +22,7 @@ const HeroSection1 = ({ darkMode }) => {
 
   // ✅ جلب البيانات عند تحميل الصفحة
   useEffect(() => {
-    axios
+    axiosInstance
       .get("/api-page/hero")
       .then((response) => {
         if (response.data && response.data.title && response.data.description) {
@@ -55,7 +53,7 @@ const HeroSection1 = ({ darkMode }) => {
   // ✅ إرسال البيانات عند الضغط على "Save Changes"
   const handleSave = async () => {
     try {
-      const response = await axios.patch("/api-page/hero", {
+      const response = await axiosInstance.patch("/api-page/hero", {
         title: { ar: formData.titleAr, en: formData.titleEn },
         description: { ar: formData.descriptionAr, en: formData.descriptionEn },
       });

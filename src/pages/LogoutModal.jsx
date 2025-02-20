@@ -8,7 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 
-function LogoutModal({ open, handleClose, handleLogout, darkMode }) {
+function LogoutModal( { open, handleClose, handleLogout, darkMode } ) {
+  
   return (
     <Dialog
       open={open}

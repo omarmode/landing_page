@@ -1,10 +1,8 @@
 import React from "react";
-// import "./NewPage.css";
 import { Button, Typography, Box, useTheme } from "@mui/material";
 
-function NewPage() {
+function NewPage({download,language}) {
     const theme = useTheme();
-    const isMobile= theme.breakpoints.down('sm')
 
   return (
     <Box
@@ -17,7 +15,7 @@ function NewPage() {
       minHeight: { xs: "100vh", md: "40vh" },
       marginBottom: { xs: "50px", md: "100px" },
       padding: { xs: "16px", sm: "24px", md: "40px" },
-      position: "relative"
+      position: "relative",
     }}
   >
     <Box
@@ -53,7 +51,8 @@ function NewPage() {
           position: { md: "absolute" },
           top: { md: "-80px" },
           bottom: { md: "-80px" },
-          left: { md: "40px" }
+            left: { md: "40px" },
+            
         }}
       >
         <Box
@@ -75,11 +74,10 @@ function NewPage() {
           display: "flex",
           flexDirection: "column",
           alignItems: "flex-end",
-          textAlign: "right",
           gap: "16px",
           width: "100%",
           ml: { md: "auto" },
-          mr: { md: "0" }
+            mr: { md: "0" },
         }}
       >
         <Typography
@@ -95,7 +93,7 @@ function NewPage() {
             textAlign: "right",
           }}
         >
-          ! حمل التطبيق الآن
+          {download?.title[language]}
         </Typography>
 
         <Typography
@@ -112,7 +110,7 @@ function NewPage() {
             maxWidth: { xs: "100%", md: "90%" }
           }}
         >
-          لا تفوّت الفرصة! حمل التطبيق الآن واستمتع بعالم من الخصومات والمكافآت التي تجعل كل عملية شراء تجربة ممتعة ومربحة.
+          {download?.description[language]}
         </Typography>
 
         <Box

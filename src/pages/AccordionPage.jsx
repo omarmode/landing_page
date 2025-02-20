@@ -5,17 +5,8 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-const AccordionPage = () => {
+const AccordionPage = ({faq,language}) => {
   const theme = useTheme();
-  const items = [
-    { title: 'كيف أكسب نقاط المكافآت؟', content: 'عند إتمام أي عملية شراء من خلال التطبيق.' },
-    { title: 'هل يمكنني استخدام النقاط في أي وقت؟', content: 'نعم، يمكنك استخدام النقاط في أي وقت داخل التطبيق.' },
-    { title: 'هل هناك رسوم إضافية؟', content: 'لا، لا توجد أي رسوم إضافية على العمليات.' },
-    { title: 'هل هناك رسوم إضافية؟', content: 'لا، لا توجد أي رسوم إضافية على العمليات.' },
-    { title: 'هل هناك رسوم إضافية؟', content: 'لا، لا توجد أي رسوم إضافية على العمليات.' },
-  ];
-
-  // حالة لتحديد الأكورديون المفتوح
   const [expanded, setExpanded] = useState(false);
 
   const handleAccordionChange = (panel) => (event, isExpanded) => {
@@ -27,7 +18,7 @@ const AccordionPage = () => {
       sx={{
         backgroundColor: theme.palette.mode === 'dark' ? '#050A17' : '#FFFFFF',
         // minHeight: '2100vh',
-        padding: '42px',
+        padding: '20px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -38,16 +29,17 @@ const AccordionPage = () => {
         variant="h4"
         sx={{
           color: '#FF2A66',
-          marginBottom: '52px',
+          marginBottom: '30px',
           textAlign: 'center',
           fontSize:{ xs: '16px', md: '32px'},
           fontFamily: 'Tajawal',
           fontWeight: 700,
         }}
       >
-        (FAQ) الأسئلة الشائعة
+        {language === "en"?"(FAQ) Frequently Asked Questions":"(FAQ) الأسئلة الشائعة"}
+        
       </Typography>
-      {items.map((item, index) => (
+      {faq?.map((item, index) => (
         <Accordion
           key={index}
           expanded={expanded === `panel${index}`} // تحقق من حالة الفتح
@@ -100,7 +92,7 @@ const AccordionPage = () => {
       marginRight: '16px',
     }}
   >
-    {item.title}
+    {item?.title[language]}
   </Typography>
 </AccordionSummary>
 
@@ -117,7 +109,7 @@ const AccordionPage = () => {
               fontWeight: 500,
             }}
           >
-            {item.content}
+            {item?.description[language]}
           </AccordionDetails>
         </Accordion>
       ))}

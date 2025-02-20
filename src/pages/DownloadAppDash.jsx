@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
+import { axiosInstance } from '../axios/axios';
 
 function DownloadAppDash({ darkMode }) {
   const [formData, setFormData] = useState({
@@ -18,7 +19,7 @@ function DownloadAppDash({ darkMode }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://cms-i47k.onrender.com/landing-page/download');
+        const response = await axiosInstance.get('/landing-page/download');
         const data = response.data;
         setFormData({
           titleAr: data.title.ar,
@@ -43,7 +44,7 @@ function DownloadAppDash({ darkMode }) {
 
   const handleSave = async () => {
     try {
-      await axios.patch('https://cms-i47k.onrender.com/landing-page/download', {
+      await axiosInstance.patch('/landing-page/download', {
         title: {
           ar: formData.titleAr,
           en: formData.titleEn,
