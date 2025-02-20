@@ -1,18 +1,65 @@
 // Navbar.jsx
 import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Box, useTheme, useMediaQuery } from '@mui/material';
 import { Link } from 'react-router-dom';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import Drawer from '@mui/material/Drawer';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 function Navbar({ darkMode, setDarkMode }) {
   const [language, setLanguage] = useState('EN');
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const toggleLanguage = () => {
     setLanguage((prevLang) => (prevLang === 'EN' ? 'Ar' : 'En'));
   };
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
     
+  const drawerContent = (
+    <Box
+      sx={{
+        padding: '20px',
+        color: darkMode ? '#ffffff' : '#000000',
+        height: '100%',
+        direction: 'rtl',
+      }}
+    >
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <IconButton onClick={handleDrawerToggle}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {['الرئيسية', 'عنّا', 'لماذا نحن', 'نظام المكافآت', 'تحميل التطبيق', 'API', 'FAQ'].map((text) => (
+          <Typography
+            key={text}
+            component={Link}
+            to={`/${text === 'الرئيسية' ? '' : text.toLowerCase()}`}
+            sx={{
+              textDecoration: 'none',
+              color: 'inherit',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              '&:hover': { opacity: 0.8 },
+              fontFamily: 'Tajawal, sans-serif',
+              fontWeight: 500
+            }}
+            onClick={handleDrawerToggle}
+          >
+            {text}
+          </Typography>
+        ))}
+      </Box>
+    </Box>
+  );
   return (
+  
     <AppBar
     sx={{
       background: darkMode ? '#00040F' : '#FFF', 
@@ -21,9 +68,10 @@ function Navbar({ darkMode, setDarkMode }) {
       margin: '0',
       color: darkMode ? '#ffffff' : '#000000',
       direction: 'rtl',
-      padding: '0 16px',
+      padding: { xs: '0 8px', sm: '0 16px' },
       zIndex: 1300,
-      borderRadius: '0', // إزالة الحواف الدائرية ليصبح مطابقًا للتصميم
+      borderRadius: '0',
+       // إزالة الحواف الدائرية ليصبح مطابقًا للتصميم
     }}
   >
   
@@ -32,8 +80,14 @@ function Navbar({ darkMode, setDarkMode }) {
   
       <Toolbar>
         
-        <Box sx={{ marginLeft: '50px' }} >
+      <Box sx={{ 
+           marginLeft: { xs: 'auto', sm: '30px', md: '50px' },
+  
+          flexShrink: 0 
+         
+        }}>
           <div style={{ cursor: 'pointer', display: 'inline-block' }}>
+            {darkMode ? (
           <svg width="72" height="26" viewBox="0 0 72 26" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Group 633337 2" clip-path="url(#clip0_4383_3743)">
 <path id="Vector" d="M45.9682 0.353523C46.1288 0.400739 46.2884 0.449856 46.448 0.500332C46.0903 0.933707 45.6975 1.32867 45.3002 1.72513C45.225 1.80041 45.1498 1.87571 45.0746 1.95103C44.8688 2.15711 44.6628 2.36299 44.4567 2.56883C44.2342 2.79118 44.0119 3.01373 43.7896 3.23625C43.3543 3.67184 42.9188 4.10724 42.4833 4.54258C42.1292 4.89647 41.7752 5.25043 41.4213 5.60444C41.3709 5.65486 41.3205 5.70527 41.2686 5.75721C41.1662 5.85963 41.0638 5.96205 40.9614 6.06447C40.0015 7.02459 39.0413 7.98451 38.0811 8.94435C37.2576 9.76753 36.4343 10.5909 35.6111 11.4144C34.6548 12.3711 33.6983 13.3277 32.7417 14.2841C32.6397 14.3861 32.5376 14.4882 32.4355 14.5902C32.3853 14.6404 32.3351 14.6906 32.2834 14.7423C31.9299 15.0957 31.5766 15.4492 31.2232 15.8027C30.7924 16.2337 30.3615 16.6645 29.9305 17.0952C29.7106 17.3149 29.4908 17.5346 29.2712 17.7545C29.07 17.9559 28.8685 18.1572 28.667 18.3584C28.5943 18.431 28.5217 18.5037 28.4491 18.5764C28.0976 18.9286 27.7444 19.2754 27.3654 19.5982C27.2001 19.7408 27.0476 19.8946 26.8947 20.0502C26.8629 20.0824 26.8312 20.1145 26.7985 20.1477C26.7306 20.2165 26.6628 20.2854 26.595 20.3544C26.4868 20.4645 26.3782 20.5743 26.2695 20.684C25.9609 20.9955 25.6524 21.3072 25.3451 21.62C23.6816 23.3126 23.6816 23.3126 22.8141 23.861C22.7597 23.8961 22.7053 23.9311 22.6493 23.9673C22.5224 24.0458 22.3948 24.1191 22.2634 24.1897C22.2181 24.2144 22.1729 24.2392 22.1263 24.2646C21.2558 24.7324 20.3529 25.0474 19.3988 25.2954C19.3514 25.3079 19.3039 25.3203 19.255 25.3331C17.829 25.6863 16.0377 25.6519 14.6174 25.2954C14.5701 25.2837 14.5228 25.272 14.4741 25.2599C12.3919 24.7313 10.699 23.6607 9.203 22.1329C9.08867 22.0207 8.97046 21.9176 8.84818 21.8142C8.49571 21.5074 8.1682 21.1763 7.83926 20.8448C7.72446 20.7292 7.60944 20.6137 7.49437 20.4983C7.20881 20.2118 6.92362 19.925 6.63842 19.6382C6.39661 19.395 6.15466 19.152 5.91252 18.9091C5.80009 18.7963 5.68787 18.6832 5.57566 18.5701C5.16226 18.1535 5.16226 18.1535 4.72633 17.7608C4.26405 17.3652 3.84426 16.9213 3.41518 16.4906C3.31643 16.3917 3.21767 16.2929 3.1189 16.194C2.86047 15.9353 2.60226 15.6765 2.34409 15.4175C2.08 15.1527 1.81571 14.8881 1.55144 14.6235C1.03406 14.1054 0.5169 13.5871 -0.00012207 13.0686C0.0965176 12.8493 0.212363 12.7026 0.381598 12.5337C0.43179 12.4833 0.481985 12.4329 0.533698 12.381C0.588055 12.3271 0.64241 12.2732 0.698414 12.2177C0.754537 12.1617 0.810663 12.1056 0.868487 12.0478C0.987414 11.9291 1.10651 11.8105 1.22576 11.6921C1.40693 11.5122 1.58755 11.3317 1.7681 11.1511C1.88395 11.0356 1.99984 10.9201 2.11576 10.8047C2.16929 10.7512 2.22282 10.6978 2.27797 10.6427C3.05977 9.86751 3.05977 9.86751 3.48348 9.58503C3.53606 9.6377 3.53607 9.6377 3.5897 9.69144C4.44417 10.5474 5.29883 11.4032 6.15369 12.2588C6.5671 12.6725 6.98044 13.0864 7.39364 13.5003C7.75394 13.8613 8.11438 14.2222 8.47495 14.5829C8.66571 14.7738 8.85641 14.9647 9.04697 15.1557C9.22668 15.3359 9.40654 15.5159 9.58653 15.6958C9.68334 15.7926 9.77997 15.8896 9.87659 15.9866C10.1785 16.2881 10.4835 16.5806 10.8087 16.857C11.0336 17.0537 11.2401 17.2691 11.4489 17.4826C11.5464 17.5813 11.6439 17.68 11.7414 17.7787C11.8923 17.9316 12.0429 18.0847 12.1932 18.2382C12.8887 18.9475 13.56 19.6124 14.4637 20.0529C14.5094 20.0755 14.5552 20.098 14.6023 20.1213C15.2471 20.427 15.9517 20.6198 16.6665 20.6506C16.7178 20.6533 16.769 20.6561 16.8218 20.6589C18.4044 20.7024 19.7962 20.1052 20.9698 19.0796C21.228 18.8275 21.4738 18.5648 21.7191 18.3003C21.7914 18.2231 21.8638 18.1459 21.9362 18.0688C22.0924 17.9023 22.2484 17.7356 22.4041 17.5687C22.8383 17.1036 23.2745 16.6404 23.7107 16.1772C23.7569 16.1281 23.8032 16.079 23.8508 16.0284C24.5831 15.2505 25.3205 14.4777 26.0617 13.7083C26.1122 13.656 26.1626 13.6036 26.2145 13.5497C26.7361 13.0083 27.2583 12.4676 27.7811 11.9274C28.0494 11.6502 28.3175 11.3728 28.5854 11.0953C28.6388 11.0401 28.6921 10.9849 28.7471 10.928C29.4979 10.1499 30.24 9.36439 30.976 8.57234C32.2428 7.20908 33.5246 5.86202 34.8376 4.54293C34.888 4.49221 34.9384 4.44149 34.9903 4.38923C38.2944 1.07012 41.07 -1.02466 45.9682 0.353523Z" fill="white"/>
@@ -50,13 +104,24 @@ function Navbar({ darkMode, setDarkMode }) {
 <rect width="71.0383" height="25" fill="white" transform="translate(0 0.5)"/>
 </clipPath>
 </defs>
-</svg>
+</svg>) :(<img src="/svgLight.png" alt="Light Mode Logo" width="72" height="26" />
+              
+            )}
 
           </div>
         </Box>
 
         {/* الروابط (في المنتصف) */}
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', gap: '30px' }}>
+        <Box 
+          sx={{ 
+            display: { xs: 'none', md: 'flex' },
+            alignItems: 'center',
+            justifyContent: 'start',
+            gap: { md: '20px', lg: '30px' },
+            flex: 1,
+            
+          }}
+        >
   {/* الروابط */}
   <Typography
     variant="body1"
@@ -66,7 +131,11 @@ function Navbar({ darkMode, setDarkMode }) {
       textDecoration: 'none',
       color: 'inherit',
       fontWeight: 'bold',
-      '&:hover': { textDecoration: 'none' },
+      fontSize: { md: '14px', lg: '16px' },
+      whiteSpace: 'nowrap',
+      '&:hover': { opacity: 0.8 },
+      fontFamily: 'Tajawal, sans-serif',
+      fontWeight: 500
     }}
   >
     الرئيسية
@@ -79,7 +148,11 @@ function Navbar({ darkMode, setDarkMode }) {
       textDecoration: 'none',
       color: 'inherit',
       fontWeight: 'bold',
-      '&:hover': { textDecoration: 'none' },
+      fontSize: { md: '14px', lg: '16px' },
+      whiteSpace: 'nowrap',
+      '&:hover': { opacity: 0.8 },
+      fontFamily: 'Tajawal, sans-serif',
+      fontWeight: 500
     }}
   >
     عنّا
@@ -92,7 +165,11 @@ function Navbar({ darkMode, setDarkMode }) {
       textDecoration: 'none',
       color: 'inherit',
       fontWeight: 'bold',
-      '&:hover': { textDecoration: 'none' },
+      fontSize: { md: '14px', lg: '16px' },
+      whiteSpace: 'nowrap',
+      '&:hover': { opacity: 0.8 },
+      fontFamily: 'Tajawal, sans-serif',
+      fontWeight: 500
     }}
   >
     لماذا نحن
@@ -105,7 +182,11 @@ function Navbar({ darkMode, setDarkMode }) {
       textDecoration: 'none',
       color: 'inherit',
       fontWeight: 'bold',
-      '&:hover': { textDecoration: 'none' },
+      fontSize: { md: '14px', lg: '16px' },
+      whiteSpace: 'nowrap',
+      '&:hover': { opacity: 0.8 },
+      fontFamily: 'Tajawal, sans-serif',
+      fontWeight: 500
     }}
   >
     نظام المكافآت
@@ -118,7 +199,11 @@ function Navbar({ darkMode, setDarkMode }) {
       textDecoration: 'none',
       color: 'inherit',
       fontWeight: 'bold',
-      '&:hover': { textDecoration: 'none' },
+      fontSize: { md: '14px', lg: '16px' },
+      whiteSpace: 'nowrap',
+      '&:hover': { opacity: 0.8 },
+      fontFamily: 'Tajawal, sans-serif',
+      fontWeight: 500
     }}
   >
     تحميل التطبيق
@@ -131,7 +216,11 @@ function Navbar({ darkMode, setDarkMode }) {
       textDecoration: 'none',
       color: 'inherit',
       fontWeight: 'bold',
-      '&:hover': { textDecoration: 'none' },
+      fontSize: { md: '14px', lg: '16px' },
+      whiteSpace: 'nowrap',
+      '&:hover': { opacity: 0.8 },
+      fontFamily: 'Tajawal, sans-serif',
+      fontWeight: 500
     }}
   >
     API
@@ -144,7 +233,11 @@ function Navbar({ darkMode, setDarkMode }) {
       textDecoration: 'none',
       color: 'inherit',
       fontWeight: 'bold',
-      '&:hover': { textDecoration: 'none' },
+      fontSize: { md: '14px', lg: '16px' },
+      whiteSpace: 'nowrap',
+      '&:hover': { opacity: 0.8 },
+      fontFamily: 'Tajawal, sans-serif',
+      fontWeight: 500
     }}
   >
     FAQ
@@ -152,7 +245,11 @@ function Navbar({ darkMode, setDarkMode }) {
 </Box>
 
 
-<Box sx={{ display: 'flex', alignItems: 'center', gap: '25px', marginRight: 'auto' }}>
+<Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start',
+ gap: { xs: '10px', md: '25px' },   
+  marginRight: { xs: 'auto', md: 'auto' },
+  marginLeft: { xs: '0', md: '0' },
+  order: { xs: 0, md: 2 }  }}>
 <IconButton
       edge="end"
       color="inherit"
@@ -160,7 +257,10 @@ function Navbar({ darkMode, setDarkMode }) {
       sx={{
         backgroundColor: '#170B23', 
         borderRadius: '50%', 
-        padding: '10px',
+        padding: { xs: '8px', md: '10px' },
+        minWidth: { xs: '35px', md: '40px' },
+        height: { xs: '35px', md: '40px' },
+        display : isMobile ? 'none' : 'flex'
       }}
     >
       <Typography
@@ -168,7 +268,7 @@ function Navbar({ darkMode, setDarkMode }) {
         sx={{
           color: '#FFFFFF', 
           fontWeight: 'bold', 
-          fontSize: '14px',
+          fontSize: { xs: '12px', md: '14px' },
         }}
       >
         {language}
@@ -182,6 +282,7 @@ function Navbar({ darkMode, setDarkMode }) {
   sx={{
     backgroundColor: darkMode ? '#722ED1' : '#4B6A9B', 
     borderRadius: '50%', 
+    display : isMobile ? 'none' : 'flex',
     padding: '8px', // حشو داخلي مناسب
   }}
 >
@@ -208,28 +309,65 @@ function Navbar({ darkMode, setDarkMode }) {
     background: 'var(--primary-pink, #FF2A66)', // الخلفية
     color: 'var(--general-btn-text, #FFF)', // لون النص
     border: 'none', // إزالة الحدود
-    padding: '15px 20px', // الحشو الداخلي
+    padding: isMobile ? '8px 12px' : '15px 20px', // الحشو الداخلي
     borderRadius: '30px', // الحواف الدائرية
-    fontWeight: 700, // وزن الخط الغامق
+    fontWeight: 500, // وزن الخط الغامق
     fontFamily: 'Tajawal, sans-serif', // نوع الخط
-    fontSize: '16px', // حجم الخط
-    lineHeight: '22px', 
+    fontSize: isMobile ? '12px' : '16px',
+    lineHeight: isMobile ? '18px' : '22px',
     textAlign: 'center',
     cursor: 'pointer', // مؤشر اليد عند التمرير
-    width: '135px', // عرض الزر
-    height: '48px', // ارتفاع الزر
+    width: isMobile ? '100px' : '135px',
+    height: isMobile ? '32px' : '48px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    order: { xs: 2, md: 0 },
   }}
 >
   ابدأ الآن معنا!
 </button>
 
 
-</Box>
-
-
-
+          {/* Mobile Menu Button */}
+          {isMobile && (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ 
+                order: 1, 
+                marginLeft: "auto"
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+        </Box>
       </Toolbar>
-    </AppBar>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        variant="temporary"
+        anchor="right"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, 
+        }}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': { 
+            width: isMobile ? '250px' : '320px',
+            boxSizing: 'border-box',
+            bgcolor: darkMode ? '#00040F' : '#FFF',
+          },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+      </AppBar>
   );
 }
 
