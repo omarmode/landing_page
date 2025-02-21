@@ -95,8 +95,6 @@ const AccordionPage = ({faq,language}) => {
     {item?.title[language]}
   </Typography>
 </AccordionSummary>
-
-
           <AccordionDetails
             sx={{
               padding: '16px 24px',
