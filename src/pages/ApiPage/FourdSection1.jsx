@@ -1,31 +1,9 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import { Box, Typography, useTheme } from "@mui/material";
 
-function FourdSection1() {
+function FourdSection1({data,language}) {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
-
-  // ✅ حالة لتخزين بيانات API
-  const [data, setData] = useState({ title: {}, description: {} });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchOfferData = async () => {
-      try {
-        const response = await axios.get(`/api-page/offer`);
-        setData(response.data);
-      } catch (err) {
-        setError("فشل تحميل البيانات");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchOfferData();
-  }, []);
-
   return (
     <Box
       sx={{
@@ -73,7 +51,7 @@ function FourdSection1() {
         }}
       >
         {/* النصوص */}
-        <Box sx={{ textAlign: "right", maxWidth: "500px" }}>
+        <Box sx={{ textAlign: language === "en"?"left":"right", maxWidth: "500px" }}>
           {/* ✅ العنوان */}
           <Typography
             variant="h4"
@@ -85,7 +63,7 @@ function FourdSection1() {
               marginBottom: "20px",
             }}
           >
-            {loading ? "جاري التحميل..." : error ? error : data.title.ar}
+            {data?.title[language]} 
           </Typography>
 
           {/* ✅ الوصف */}
@@ -100,11 +78,7 @@ function FourdSection1() {
               marginBottom: "30px",
             }}
           >
-            {loading
-              ? "جاري تحميل البيانات..."
-              : error
-              ? "تعذر تحميل الوصف."
-              : data.description.ar}
+            {data?.description[language]}
           </Typography>
 
           {/* ✅ زر البدء (يمكنك تفعيله عند الحاجة) */}

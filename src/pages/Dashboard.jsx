@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   CssBaseline,
@@ -9,7 +9,6 @@ import {
   IconButton,
   List,
   ListItem,
-  ListItemIcon,
   ListItemText,
   Collapse,
   useMediaQuery,
@@ -17,9 +16,6 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import HomeIcon from "@mui/icons-material/Home";
-import InfoIcon from "@mui/icons-material/Info";
-import SettingsIcon from "@mui/icons-material/Settings";
 import LogoDark from "./icons/LogoDark";
 import LogoLigth from "./icons/LogoLigth";
 import HeroSection from "./HeroSection";
@@ -47,11 +43,10 @@ import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 const darkBackground = "#050A17";
-const activeColor = "#FF2A66"; 
+const activeColor = "#FF2A66";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-
 
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -83,7 +78,6 @@ export default function Dashboard() {
           p: 2,
           backgroundColor: darkMode ? darkBackground : "#fff",
           color: darkMode ? "#fff" : "#000",
-      
         }}
       >
         {darkMode ? (
@@ -271,13 +265,13 @@ export default function Dashboard() {
       </List>
     </>
   );
-  const token = true; 
-    useEffect(() => {
-    if (!token) {
+
+  useEffect(() => {
+    if (!localStorage.getItem("tokenOktpn")) {
       navigate("/");
     }
-    }, [ navigate ] );
-  if(!token) return null
+  }, [navigate]);
+  if (!localStorage.getItem("tokenOktpn")) return null;
   return (
     <Box
       sx={{
@@ -285,7 +279,7 @@ export default function Dashboard() {
         backgroundColor: darkMode ? darkBackground : "#f5f5f5",
         color: darkMode ? "#fff" : "#000",
         minHeight: "100vh",
-        direction:"ltr"
+        direction: "ltr",
       }}
     >
       <CssBaseline />

@@ -82,7 +82,7 @@ const AccordionPage = ({faq,language}) => {
     sx={{
       fontWeight: 500,
       fontSize: { xs: '16px', md: '20px' },
-      textAlign: 'right',
+      textAlign: language === "en"?"left":"right",
       fontFamily: 'Tajawal',
       flex: 1,
       whiteSpace: 'nowrap',
@@ -102,7 +102,7 @@ const AccordionPage = ({faq,language}) => {
               padding: '16px 24px',
               fontSize: { xs: '14px', md: '16px' },
               color: theme.palette.mode === 'dark' ? '#CCCCCC' : '#00040F',
-              textAlign: 'right',
+              textAlign: language === "en"?"left":"right",
               borderTop: theme.palette.mode === 'dark' ? '1px solid #333' : '1px solid #FFF',
               backgroundColor: theme.palette.mode === 'dark' ? '#00040F' : '#FFFFFF',
               fontFamily: 'Tajawal',

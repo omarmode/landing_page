@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, {  useState } from "react";
 import { Box, Typography, Grid, Paper, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import IconHero from "../icons/IconHero";
@@ -7,38 +6,38 @@ import IconHero2 from "../icons/IconHero2";
 import IconHero3 from "../icons/IconHero3";
 import IconHero4 from "../icons/IconHero4";
 
-function ThirdSection1() {
+
+function ThirdSection1({language,data}) {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
-
   // ✅ حالة لتخزين بيانات الكروت القادمة من الـ API
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    // الأرقام الخاصة بالكروت التي نريد جلبها من الـ API
-    const cardOrders = [1, 2, 3, 4];
+  // useEffect(() => {
+  //   // الأرقام الخاصة بالكروت التي نريد جلبها من الـ API
+  //   const cardOrders = [1, 2, 3, 4];
 
-    const fetchCards = async () => {
-      try {
-        // ✅ جلب البيانات لكل الكروت في وقت واحد باستخدام Promise.all
-        const responses = await Promise.all(
-          cardOrders.map((order) =>
-            axios.get(`/api-page/why-ok/${order}`).then((res) => res.data)
-          )
-        );
+  //   const fetchCards = async () => {
+  //     try {
+  //       // ✅ جلب البيانات لكل الكروت في وقت واحد باستخدام Promise.all
+  //       const responses = await Promise.all(
+  //         cardOrders.map((order) =>
+  //           axiosInstance.get(`/api-page/why-ok/${order}`).then((res) => res.data)
+  //         )
+  //       );
 
-        setCards(responses); // تخزين البيانات في الـ state
-      } catch (err) {
-        setError("فشل تحميل البيانات");
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       setCards(responses); // تخزين البيانات في الـ state
+  //     } catch (err) {
+  //       setError("فشل تحميل البيانات");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchCards();
-  }, []);
+  //   fetchCards();
+  // }, []);
 
   // أيقونات الكروت مرتبة حسب `order`
   const icons = {
@@ -74,16 +73,14 @@ function ThirdSection1() {
           marginBottom: "40px",
         }}
       >
-        !؟ OKpin لماذا
+        {language === "en"?"Why OKpin?":"!؟ OKpin لماذا"}
       </Typography>
-
-      {/* ✅ عرض رسالة تحميل أو خطأ إذا لم يتم جلب البيانات */}
-      {loading && <Typography>جاري تحميل البيانات...</Typography>}
+    
       {error && <Typography sx={{ color: "red" }}>{error}</Typography>}
 
       {/* ✅ عرض الكروت بعد تحميل البيانات */}
       <Grid container spacing={2} justifyContent="center">
-        {cards.map((card, index) => {
+        {data && data?.map((card, index) => {
           const isTopBackground = index % 2 !== 0; // الخلفية العلوية للكارد الرابع والثاني
           const cardColor = cardColors[card.order] || "#0059FF"; // استخدام اللون حسب `order`
 
@@ -157,7 +154,7 @@ function ThirdSection1() {
                     }}
                   >
                     <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                      {card.title.ar}
+                      {card?.title[language]}
                     </Typography>
                     <Typography
                       variant="body1"
@@ -166,7 +163,7 @@ function ThirdSection1() {
                         padding: "0 10px",
                       }}
                     >
-                      {card.description.ar}
+                      {card.description[language]}
                     </Typography>
                   </Box>
                 </Paper>

@@ -1,43 +1,31 @@
 // pages/Home.jsx
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Box, Typography } from '@mui/material';
+import React from 'react';
+import { Box, Typography,  Backdrop, CircularProgress } from '@mui/material';
 import ThirdSection1 from './ThirdSection1';
 import HowAPIWorks from './HowAPIWorks';
 import FeaturesSection from './FeaturesSection';
 import FourdSection1 from './FourdSection1';
 import AccordionPage1 from './AccordionPage1';
 import Footer from '../Footer';
+import { axiosInstance } from '../../axios/axios';
+import { useQuery } from '@tanstack/react-query';
 
-function APiPage({ darkMode }) {
+function APiPage({ darkMode,language }) {
   const isDarkMode = darkMode;
-
-  // تخزين بيانات API
-  const [heroData, setHeroData] = useState({ title: {}, description: {} });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchHeroData = async () => {
-      try {
-        const response = await axios.get('/api-page/hero'); // استخدام proxy
-        setHeroData(response.data);
-      } catch (err) {
-        console.error('Error fetching data:', err);
-        setError('فشل تحميل البيانات');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHeroData();
-  }, []);
-
-  if (loading) return <p>جاري التحميل...</p>;
-  if (error) return <p>{error}</p>;
+  function getAllApiPage() {
+    return axiosInstance.get(`/translate/api?lang=${language}`);
+  }
+  const { data,isLoading } = useQuery({
+    queryKey: ["getAllApiPage", language],
+    queryFn: getAllApiPage,
+  });
+   console.log(data)
 
   return (
     <>
+           <Backdrop sx={{ color: "#fff", zIndex: 1201 }} open={isLoading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Box
         sx={{
           display: 'flex',
@@ -80,7 +68,7 @@ function APiPage({ darkMode }) {
             fontSize: { xs: '28px', md: '48px' },
           }}
         >
-          {heroData.title?.ar || 'جاري تحميل العنوان...'}
+          {data && data?.data?.hero?.title[language]}
         </Typography>
 
         {/* الوصف النصي (محمل من API) */}
@@ -94,17 +82,16 @@ function APiPage({ darkMode }) {
             fontSize: { xs: '16px', md: '24px' },
           }}
         >
-          {heroData.description?.ar || 'جاري تحميل الوصف...'}
+          {data && data?.data?.hero?.description[language]}
         </Typography>
       </Box>
 
       {/* الأقسام الأخرى */}
-      <ThirdSection1 />
-      <HowAPIWorks />
-      <FeaturesSection />
-      <FourdSection1 />
-      <AccordionPage1 />
-      <Footer />
+      <ThirdSection1 language={ language } data={ data?.data?.whyOk} />
+      <HowAPIWorks data={data?.data?.howItWork[0]} language={ language }/>  
+      <FeaturesSection data={ data?.data?.apiAdvantage } language={language} />
+      <FourdSection1 data={ data?.data?.offer } language={language}/>
+      <AccordionPage1 data={ data?.data?.faq } language={language}/>
     </>
   );
 }

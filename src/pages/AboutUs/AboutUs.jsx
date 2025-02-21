@@ -24,7 +24,7 @@ const AboutUs = ({ theme,language }) => {
     <Box
       sx={{
         width: "100%",
-        backgroundImage: "url(./background.png)",
+        backgroundImage: 'url(../../public/background.jpeg)',
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

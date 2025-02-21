@@ -17,6 +17,7 @@ import AboutUs from "./pages/AboutUs/AboutUs";
 import APiPage from "./pages/ApiPage/APIPage";
 import TermsOfUse1 from "./pages/TermsofUse1";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Footer from "./pages/Footer";
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [ language, setLanguage ] = useState("en");
@@ -59,7 +60,7 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route
                 path="/APiPage"
-                element={<APiPage darkMode={darkMode} />}
+                element={ <APiPage darkMode={ darkMode } language={ language} />}
               />
               <Route
                 path="/about-us"
@@ -67,7 +68,7 @@ function App() {
               />
               <Route
                 path="/privacy-policy"
-                element={<PrivacyPolicy theme={darkMode ? "dark" : "light"} />}
+                element={<PrivacyPolicy theme={darkMode ? "dark" : "light"} language={language}/>}
               />
               <Route
                 path="/terms-ofuse"
@@ -107,6 +108,11 @@ function Layout({ darkMode, setDarkMode, language, setLanguage }) {
         />
       )}
       <Outlet />
+          {location.pathname !== "/dashboard" && (
+        <Footer
+          language={language}   
+        />
+      )}
     </>
   );
 }

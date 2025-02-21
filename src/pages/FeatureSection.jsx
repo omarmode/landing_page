@@ -1,5 +1,11 @@
 import React from 'react';
 import { Typography, Box, Button, useTheme } from '@mui/material';
+import apiSectionImage from '../../public/Rectangle__1_-removebg-preview.png';
+
+
+
+
+
 
 const FeatureSection = ({apiSection,language}) => {
   const theme = useTheme();
@@ -31,7 +37,7 @@ const FeatureSection = ({apiSection,language}) => {
         {/* الصورة */}
         <Box
           component="img"
-          src={apiSection?.image}
+          src={apiSectionImage}
           alt="API Illustration"
           sx={{
             width: '300px',
@@ -60,7 +66,6 @@ const FeatureSection = ({apiSection,language}) => {
               fontSize: { xs: '14px', md: '20px' },
               lineHeight: '1.8',
               marginBottom: '24px',
-             
               color: theme.palette.mode === 'dark' ? '#FFF' : '#1A1A1A',
               fontFamily: 'Tajawal',
               fontWeight: 500,

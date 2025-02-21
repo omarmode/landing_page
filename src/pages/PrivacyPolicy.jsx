@@ -1,33 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Box, Typography, IconButton } from '@mui/material';
+import React from 'react';
+import { Box, Typography, IconButton, Backdrop, CircularProgress } from '@mui/material';
 import Facebook from './icons/Facebook';
 import Twitter from './icons/Twitter';
 import Whatsappicon from './icons/Whatsappicon';
 import Telegram from './icons/Telegram';
 import Logo from './icons/Logo';
+import { axiosInstance } from '../axios/axios';
+import { useQuery } from '@tanstack/react-query';
+const TermsOfUse = ({ theme ,language}) => {
 
-const TermsOfUse = ({ theme }) => {
-  const [termsData, setTermsData] = useState(null);
   const containerBackgroundColor = theme === 'dark' ? '#00040F' : '#FFFFFF';
   const textColor = theme === 'dark' ? '#FFFFFF' : '#000000';
 
-  useEffect(() => {
-    axios.get('/privacy-policey')
-      .then((response) => {
-        setTermsData(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching terms of use:', error);
-      });
-  }, []);
+  function getPriviceyUser() {
+    return axiosInstance.get(`/translate/privacy?lang=${language}`);
+  }
+  const { data,isLoading } = useQuery({
+    queryKey: ["getPriviceyUser", language],
+    queryFn: getPriviceyUser,
+  });
+
 
   return (
-    <Box
+    <>
+         <Backdrop sx={{ color: "#fff", zIndex: 1201 }} open={isLoading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+         <Box
       sx={{
         width: '100%',
         height: '100vh',
-        backgroundImage: 'url(./background.png)',
+        backgroundImage: 'url(../../public/background.jpeg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -40,14 +43,15 @@ const TermsOfUse = ({ theme }) => {
     >
       <Box
         sx={{
-          width: '70%',
-          height: '90vh',
+          width: '95%',
+          height: '60vh',
           backgroundColor: containerBackgroundColor,
           borderRadius: '15px',
           boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
+          textAlign: language === "en"?"left":"right",
           padding: '20px',
           marginTop: '50px',
         }}
@@ -61,11 +65,11 @@ const TermsOfUse = ({ theme }) => {
           sx={{
             color: '#FF2A66',
             fontWeight: 'bold',
-            textAlign: 'right',
+          
             mb: 3,
           }}
         >
-          {termsData ? termsData.title.ar : 'جارٍ التحميل...'}
+          {data && data?.data?.privacy[0].title[language] }
         </Typography>
 
         <Box
@@ -75,12 +79,12 @@ const TermsOfUse = ({ theme }) => {
             color: textColor,
             fontSize: '16px',
             lineHeight: '1.8',
-            textAlign: 'right',
+            textAlign: language === "en"?"left":"right",
             scrollbarWidth: 'none',
             '&::-webkit-scrollbar': { display: 'none' },
           }}
           dangerouslySetInnerHTML={{
-            __html: termsData ? termsData.description.ar : 'جارٍ التحميل...',
+            __html: data && data?.data?.privacy[0].description[language],
           }} // ✅ عرض HTML بشكل مباشر
         />
 
@@ -107,6 +111,8 @@ const TermsOfUse = ({ theme }) => {
         </Box>
       </Box>
     </Box>
+    </>
+ 
   );
 };
 

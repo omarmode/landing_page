@@ -16,7 +16,6 @@ import NewPage from "./NewPage";
 import StyledPage from "./StyledPage";
 import AccordionPage from "./AccordionPage";
 import FeatureSection from "./FeatureSection";
-import Footer from "./Footer";
 import { axiosInstance } from "../axios/axios";
 import { useQuery } from "@tanstack/react-query";
 import StepsPageMobile from "./StepsPageMobile";
@@ -276,9 +275,9 @@ function Home({ darkMode, language }) {
       />
       <NewPage download={data?.data?.download[0]} language={language}/>
       <StyledPage category={ data?.data?.category } language={ language } safety={data?.data?.safety } />
-       <AccordionPage faq={ data?.data?.faq } language={ language }/>
+      <AccordionPage faq={ data?.data?.faq } language={ language }/>
       <FeatureSection apiSection={ data?.data?.apiSection} language={language} />
-      <Footer language={language} />
+   
     </>
   );
 }

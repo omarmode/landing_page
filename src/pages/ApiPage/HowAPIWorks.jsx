@@ -1,31 +1,11 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import { Box, Typography, useTheme, Grid } from "@mui/material";
 
-function HowAPIWorks() {
+
+function HowAPIWorks({data,language}) {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
-
-  // ✅ حالة لتخزين بيانات API
-  const [data, setData] = useState({ title: {}, description: {} });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchHowItWorks = async () => {
-      try {
-        const response = await axios.get(`/api-page/how-it-works`);
-        setData(response.data);
-      } catch (err) {
-        setError("فشل تحميل البيانات");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHowItWorks();
-  }, []);
-
+ 
   return (
     <Box
       sx={{
@@ -59,10 +39,10 @@ function HowAPIWorks() {
               fontWeight: "700",
               color: "#FF2A66",
               marginBottom: "16px",
-              textAlign: "right",
+              textAlign: language === "en"?"left":"right",
             }}
           >
-            {loading ? "جاري التحميل..." : error ? error : data.title.ar}
+            {data &&  data?.title[language]}
           </Typography>
 
           {/* ✅ الوصف */}
@@ -72,17 +52,13 @@ function HowAPIWorks() {
               fontSize: { xs: "18px", md: "22px" },
               lineHeight: "2",
               maxWidth: "600px",
-              textAlign: "right",
+              textAlign: language === "en"?"left":"right",
               display: "block",
               width: "100%",
               marginLeft: "auto",
             }}
           >
-            {loading
-              ? "جاري تحميل البيانات..."
-              : error
-              ? "تعذر تحميل الوصف."
-              : data.description.ar.split("\n").map((line, index) => (
+            {data &&  data?.description[language].split("\n").map((line, index) => (
                   <React.Fragment key={index}>
                     {line}
                     <br />

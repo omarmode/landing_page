@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { axiosInstance } from "../axios/axios";
+import axios from "axios";
 
 function APISection({ darkMode }) {
   const [formData, setFormData] = useState({
@@ -39,7 +40,8 @@ function APISection({ darkMode }) {
 
   // ✅ **رفع الصورة إلى `imgbb` والحصول على رابط مباشر**
   const handleImageChange = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[ 0 ];
+    console.log(file)
     if (file) {
       const reader = new FileReader();
   
@@ -58,13 +60,11 @@ function APISection({ darkMode }) {
           "https://api.imgbb.com/1/upload?key=YOUR_IMGBB_API_KEY", // 🔹 استخدم مفتاح API الصحيح
           formDataImage,
             {
-    headers: {
-      "x-app-token": import.meta.env.VITE_BASE_URL, 
-    }
   }
         );
   
         const imageUrl = uploadResponse.data.data.url;
+        console.log('imageUrl',imageUrl)
         setFormData((prev) => ({ ...prev, image: imageUrl })); // ✅ تحديث الحالة
       } catch (error) {
         console.error("Error uploading image:", error);
@@ -73,14 +73,13 @@ function APISection({ darkMode }) {
   };
   
 
-  // ✅ **حفظ البيانات وإرسال الصورة كـ `url` فقط**
+ 
   const handleSave = () => {
     const updatedData = {
       title: { ar: formData.titleAr, en: formData.titleEn },
       description: { ar: formData.descriptionAr, en: formData.descriptionEn },
-      image: formData.image, // 🔥 إرسال الصورة كرابط `string`
+      image: formData.image, 
     };
-
     axiosInstance
       .patch("/landing-page/api-section", updatedData, {
         headers: { "Content-Type": "application/json" }, // 🔹 تأكد من إرسال JSON

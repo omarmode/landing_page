@@ -26,7 +26,7 @@ function Starwith4Steps({ darkMode }) {
       try {
         const responses = await Promise.all(
           Object.values(cardOrderMapping).map((order) =>
-            axiosInstance.get(`${API_BASE_URL}/landing-page/steps/${order}`)
+            axiosInstance.get(`/landing-page/steps/${order}`)
           )
         );
 
@@ -64,7 +64,7 @@ function Starwith4Steps({ darkMode }) {
     try {
       const order = cardOrderMapping[activeCard];
 
-      await axiosInstance.patch(`${API_BASE_URL}/landing-page/steps/${order}`, {
+      await axiosInstance.patch(`/landing-page/steps/${order}`, {
         title: {
           ar: formData[activeCard].titleAr,
           en: formData[activeCard].titleEn,

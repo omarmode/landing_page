@@ -1,5 +1,5 @@
 // Navbar.jsx
-import React, {  useState } from "react";
+import { useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -19,7 +19,7 @@ function Navbar({ darkMode, setDarkMode, setLanguage, language }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const toggleLanguage = () => {
-    setLanguage( ( prevLang ) => ( prevLang === "en" ? "ar" : "en" ) );
+    setLanguage((prevLang) => (prevLang === "en" ? "ar" : "en"));
     document.body.style.direction = language === "ar" ? "rtl" : "ltr";
   };
   const handleDrawerToggle = () => {
@@ -47,41 +47,40 @@ function Navbar({ darkMode, setDarkMode, setLanguage, language }) {
         </IconButton>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-        { [
+        {[
           {
-          name: language === "en" ? "Home" : "الرئيسية", route: "/",
-          
-          
-          
-          
-         
-        
-          }, {
-          name:language==="en"?"Abaut Us":"عنّا",route:"/about-us",
-
-          }, {
-          name:language==="en"?"Why Us":"لماذا نحن",route:"/",
-
-
-        },{
-name:language==="en"?"Rewards system":"نظام المكافآت",route:"/",
-
-
-        }
-          , {
-         name:language==="en"?"Download App":"تحميل التطبيق",route:"/",
-          }, {
-          name: "API", route: "/",
-       },{
-  name:"FAQ",route:"/",
-       }
-         
-        ].map((text,i) => (
+            name: language === "en" ? "Home" : "الرئيسية",
+            route: "/",
+          },
+          {
+            name: language === "en" ? "Abaut Us" : "عنّا",
+            route: "/about-us",
+          },
+          {
+            name: language === "en" ? "Why Us" : "لماذا نحن",
+            route: "/",
+          },
+          {
+            name: language === "en" ? "Rewards system" : "نظام المكافآت",
+            route: "/",
+          },
+          {
+            name: language === "en" ? "Download App" : "تحميل التطبيق",
+            route: "/",
+          },
+          {
+            name: "API",
+            route: "/",
+          },
+          {
+            name: "FAQ",
+            route: "/",
+          },
+        ].map((text, i) => (
           <Typography
             key={i}
-           
             component={Link}
-            to={text.active}
+            to={text.route}
             sx={{
               textDecoration: "none",
               color: "inherit",
@@ -89,7 +88,7 @@ name:language==="en"?"Rewards system":"نظام المكافآت",route:"/",
               fontSize: "16px",
               "&:hover": { opacity: 0.8 },
               fontFamily: "Tajawal, sans-serif",
-              fontWeight: 500,
+          
             }}
             onClick={handleDrawerToggle}
           >
@@ -110,13 +109,11 @@ name:language==="en"?"Rewards system":"نظام المكافآت",route:"/",
         padding: { xs: "0 8px", sm: "0 16px" },
         zIndex: 1300,
         borderRadius: "0",
-  
-        
       }}
     >
       <Toolbar>
         <Box
-          sx={{   
+          sx={{
             flexShrink: 0,
           }}
         >
@@ -198,12 +195,11 @@ name:language==="en"?"Rewards system":"نظام المكافآت",route:"/",
           sx={{
             display: { xs: "none", md: "flex" },
             alignItems: "center",
-            justifyContent:"end",
+            justifyContent: "end",
             gap: { md: "20px", lg: "30px" },
-            marginLeft: language === "ar"? "50px" :"50px" ,
+            marginLeft: language === "ar" ? "50px" : "50px",
             marginRight: language === "ar" ? "50px" : "50px",
             flex: 1,
-           
           }}
         >
           {/* الروابط */}
@@ -222,7 +218,7 @@ name:language==="en"?"Rewards system":"نظام المكافآت",route:"/",
               fontWeight: 500,
             }}
           >
-            {language === "ar"?"عنّا":"About Us"} 
+            {language === "ar" ? "عنّا" : "About Us"}
           </Typography>
           <Typography
             variant="body1"
@@ -239,8 +235,7 @@ name:language==="en"?"Rewards system":"نظام المكافآت",route:"/",
               fontWeight: 500,
             }}
           >
-            {language === "ar"?"لماذا نحن":"Why Us"} 
-            
+            {language === "ar" ? "لماذا نحن" : "Why Us"}
           </Typography>
           <Typography
             variant="body1"
@@ -257,8 +252,7 @@ name:language==="en"?"Rewards system":"نظام المكافآت",route:"/",
               fontWeight: 500,
             }}
           >
-             {language === "ar"?"نظام المكافآت":"Rewards system"} 
-            
+            {language === "ar" ? "نظام المكافآت" : "Rewards system"}
           </Typography>
           <Typography
             variant="body1"
@@ -275,8 +269,7 @@ name:language==="en"?"Rewards system":"نظام المكافآت",route:"/",
               fontWeight: 500,
             }}
           >
-
-            {language === "ar"?"تحميل التطبيق":"Download"} 
+            {language === "ar" ? "تحميل التطبيق" : "Download"}
           </Typography>
           <Typography
             variant="body1"
@@ -292,7 +285,7 @@ name:language==="en"?"Rewards system":"نظام المكافآت",route:"/",
               fontFamily: "Tajawal, sans-serif",
               fontWeight: 500,
             }}
-          >       
+          >
             API
           </Typography>
           <Typography
@@ -310,10 +303,9 @@ name:language==="en"?"Rewards system":"نظام المكافآت",route:"/",
               fontWeight: 500,
             }}
           >
-            {language === "ar"?"الاسئلة الشائعة":"FAQ"} 
-            
+            {language === "ar" ? "الاسئلة الشائعة" : "FAQ"}
           </Typography>
-             <Typography
+          <Typography
             variant="body1"
             component={Link}
             to="/"
@@ -328,7 +320,7 @@ name:language==="en"?"Rewards system":"نظام المكافآت",route:"/",
               fontWeight: 500,
             }}
           >
-           {language === "ar"?"الرئيسية":"Home"} 
+            {language === "ar" ? "الرئيسية" : "Home"}
           </Typography>
         </Box>
 
@@ -339,7 +331,7 @@ name:language==="en"?"Rewards system":"نظام المكافآت",route:"/",
             justifyContent: "end",
             gap: { xs: "10px", md: "25px" },
             marginRight: { xs: "auto", md: "auto" },
-            marginLeft: { xs: "10%",md:"auto" },
+            marginLeft: { xs: "10%", md: "auto" },
             order: { xs: 0, md: 2 },
           }}
         >
@@ -416,17 +408,17 @@ name:language==="en"?"Rewards system":"نظام المكافآت",route:"/",
 
           <button
             style={{
-              background: "var(--primary-pink, #FF2A66)", 
-              color: "var(--general-btn-text, #FFF)", 
-              border: "none", 
-              padding: isMobile ? "8px 12px" : "15px 20px", 
-              borderRadius: "30px", 
+              background: "var(--primary-pink, #FF2A66)",
+              color: "var(--general-btn-text, #FFF)",
+              border: "none",
+              padding: isMobile ? "8px 12px" : "15px 20px",
+              borderRadius: "30px",
               fontWeight: 500,
               fontFamily: "Tajawal, sans-serif",
               fontSize: isMobile ? "12px" : "16px",
               lineHeight: isMobile ? "18px" : "22px",
               textAlign: "center",
-              cursor: "pointer", 
+              cursor: "pointer",
               width: isMobile ? "100px" : "135px",
               height: isMobile ? "32px" : "48px",
               display: "flex",
@@ -435,8 +427,7 @@ name:language==="en"?"Rewards system":"نظام المكافآت",route:"/",
               order: { xs: 2, md: 0 },
             }}
           >
-            {language === "ar"?"ابدأ الآن معنا!":"Start Now"}
-           
+            {language === "ar" ? "ابدأ الآن معنا!" : "Start Now"}
           </button>
 
           {/* Mobile Menu Button */}

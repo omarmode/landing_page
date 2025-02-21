@@ -1,34 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Box, Typography, IconButton } from '@mui/material';
+import React from 'react';
+import { Box, Typography, IconButton, Backdrop, CircularProgress } from '@mui/material';
 import Facebook from './icons/Facebook';
 import Twitter from './icons/Twitter';
 import Whatsappicon from './icons/Whatsappicon';
 import Telegram from './icons/Telegram';
 import Logo from './icons/Logo';
+import { axiosInstance } from '../axios/axios';
+import { useQuery } from '@tanstack/react-query';
 
-const TermsOfUse1= ({ theme }) => {
-  const [termsData, setTermsData] = useState(null);
+const TermsOfUse1= ({ theme,language }) => {
   const containerBackgroundColor = theme === 'dark' ? '#00040F' : '#FFFFFF';
   const textColor = theme === 'dark' ? '#FFFFFF' : '#000000';
 
-  useEffect(() => {
-    axios.get('/terms-of-use')
-      .then((response) => {
-        setTermsData(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching terms of use:', error);
-      });
-  }, []);
- 
+  function getTrumsUser() {
+    return axiosInstance.get(`/translate/terms?lang=${language}`);
+  }
+  const { data,isLoading } = useQuery({
+    queryKey: ["getTrumsUser", language],
+    queryFn: getTrumsUser,
+  });
+
   
   return (
-    <Box
+    <>
+    
+            <Backdrop sx={{ color: "#fff", zIndex: 1201 }} open={isLoading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+         <Box
       sx={{
         width: '100%',
         height: '100vh',
-        backgroundImage: 'url(./background.png)',
+        backgroundImage: 'url(../../public/background.jpeg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -41,8 +44,8 @@ const TermsOfUse1= ({ theme }) => {
     >
       <Box
         sx={{
-          width: '70%',
-          height: '90vh',
+          width: '95%',
+          height: '60vh',
           backgroundColor: containerBackgroundColor,
           borderRadius: '15px',
           boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
@@ -66,7 +69,7 @@ const TermsOfUse1= ({ theme }) => {
             mb: 3,
           }}
         >
-          {termsData ? termsData.title.ar : 'جارٍ التحميل...'}
+          {data && data?.data?.terms[0].title[language]}
         </Typography>
 
         <Box
@@ -81,7 +84,7 @@ const TermsOfUse1= ({ theme }) => {
             '&::-webkit-scrollbar': { display: 'none' },
           }}
           dangerouslySetInnerHTML={{
-            __html: termsData ? termsData.description.ar : 'جارٍ التحميل...',
+            __html: data && data?.data?.terms[0].description[language],
           }} // ✅ عرض HTML بشكل مباشر
         />
 
@@ -108,6 +111,8 @@ const TermsOfUse1= ({ theme }) => {
         </Box>
       </Box>
     </Box>
+    </>
+ 
   );
 };
 

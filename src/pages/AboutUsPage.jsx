@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { Box, Typography, Button, Snackbar, Alert } from "@mui/material";
 import { RichTextEditor } from "@mantine/rte"; // استيراد المحرر الجديد من Mantine
 import { axiosInstance } from "../axios/axios";

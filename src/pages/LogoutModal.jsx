@@ -7,9 +7,10 @@ import {
   Button,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function LogoutModal( { open, handleClose, handleLogout, darkMode } ) {
-  
+  const navigate = useNavigate()
   return (
     <Dialog
       open={open}
@@ -57,7 +58,10 @@ function LogoutModal( { open, handleClose, handleLogout, darkMode } ) {
           Cancel
         </Button>
         <Button
-          onClick={handleLogout}
+          onClick={ () => {
+            localStorage.removeItem( "tokenOktpn" )
+            navigate("/")
+          } }
           sx={{
             borderRadius: "12px",
             padding: "8px 24px",

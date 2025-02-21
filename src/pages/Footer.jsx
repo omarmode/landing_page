@@ -17,19 +17,27 @@ import Appstore from "./icons/Appstore";
 import ControlPanelModal from "./ControlPanelModal";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../axios/axios";
-const Footer = ({language}) => {
+import { useNavigate } from "react-router-dom";
+const Footer = ({ language }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
   const theme = useTheme();
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen( false );
-   function getSocialMedia() {
+  const handleOpenModal = () => {
+    if (!localStorage.getItem("tokenOktpn")) {
+      setIsModalOpen(true);
+    } else {
+      navigate("/dashboard");
+    }
+  };
+  const handleCloseModal = () => setIsModalOpen(false);
+  function getSocialMedia() {
     return axiosInstance.get(`/social-media`);
   }
 
   const { data } = useQuery({
     queryKey: ["getSocialMedia", language],
     queryFn: getSocialMedia,
-  } );
+  });
 
   return (
     <Box
@@ -39,11 +47,7 @@ const Footer = ({language}) => {
         padding: "40px 40px",
       }}
     >
-      <Grid
-        container
-        spacing={4}
-        justifyContent="space-between"
-      >
+      <Grid container spacing={4} justifyContent="space-between">
         {/* العمود الأول (حمل تطبيق OKpin) */}
         <Grid
           item
@@ -63,17 +67,16 @@ const Footer = ({language}) => {
               direction: "rtl",
               fontFamily: "Tajawal",
               fontSize: { xs: "14px", md: "16px" },
-              textAlign:  language ==="en"?"left":"right",
+              textAlign: language === "en" ? "left" : "right",
             }}
           >
-            { language === "en" ? "Download App Okpin" : "حمل تطبيق OKpin" }
-            
+            {language === "en" ? "Download App Okpin" : "حمل تطبيق OKpin"}
           </Typography>
 
           <Box
             sx={{
               display: "flex",
-              flexDirection:{md:"row",xs:"column"},
+              flexDirection: { md: "row", xs: "column" },
               gap: "8px", // مسافة صغيرة بين الزرين
               justifyContent: "center", // محاذاة الزرين في الوسط
               marginTop: "8px",
@@ -190,7 +193,7 @@ const Footer = ({language}) => {
           md={3}
           sx={{
             order: { xs: 4, md: 2 },
-            textAlign:  language ==="en"?"left":"right" 
+            textAlign: language === "en" ? "left" : "right",
           }}
         >
           <Typography
@@ -202,15 +205,16 @@ const Footer = ({language}) => {
               fontFamily: "Tajawal",
             }}
           >
-            {language === "en"?"contact us":"تواصل معنا"}
-            
+            {language === "en" ? "contact us" : "تواصل معنا"}
           </Typography>
-          <Box sx={ {
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "10px",
-       justifyContent:"end"
-          } }>
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "10px",
+              justifyContent: "end",
+            }}
+          >
             <IconButton
               href={data?.data?.xWebsite}
               sx={{
@@ -223,7 +227,7 @@ const Footer = ({language}) => {
               <Twitter />
             </IconButton>
             <IconButton
-                href={data?.data?.WhatsApp}
+              href={data?.data?.WhatsApp}
               sx={{
                 color: theme.palette.mode === "dark" ? "#FFFFFF" : "#000000",
                 backgroundColor:
@@ -265,7 +269,7 @@ const Footer = ({language}) => {
           md={3}
           sx={{
             order: { xs: 1, md: 3 },
-            textAlign:   language ==="en"?"left":"right" 
+            textAlign: language === "en" ? "left" : "right",
           }}
         >
           <Typography
@@ -277,8 +281,7 @@ const Footer = ({language}) => {
               fontFamily: "Tajawal",
             }}
           >
-            {language ==="en"?"Platform policies":"سياسات المنصة"}
-            
+            {language === "en" ? "Platform policies" : "سياسات المنصة"}
           </Typography>
           <Box>
             <Link
@@ -293,8 +296,7 @@ const Footer = ({language}) => {
                 fontFamily: "Tajawal",
               }}
             >
-              {language ==="en"?"privacy policy":"سياسة الخصوصية"}
-              
+              {language === "en" ? "privacy policy" : "سياسة الخصوصية"}
             </Link>
 
             <Link
@@ -304,19 +306,16 @@ const Footer = ({language}) => {
               display="block"
               sx={{ marginBottom: "8px" }}
             >
-                {language ==="en"?"terms of use":"شروط الاستخدام"}
-              
+              {language === "en" ? "terms of use" : "شروط الاستخدام"}
             </Link>
             <Link
               href="#"
               color="inherit"
               underline="none"
               display="block"
-              sx={ { marginBottom: "8px" } }
-              
+              sx={{ marginBottom: "8px" }}
             >
-                {language ==="en"?"service API":"خدمة API"}
-              
+              {language === "en" ? "service API" : "خدمة API"}
             </Link>
             <Link
               href="#"
@@ -330,9 +329,7 @@ const Footer = ({language}) => {
                 fontFamily: "Tajawal",
               }}
             >
-                {language ==="en"?"about OKpin":" عن OKpin"}
-
-             
+              {language === "en" ? "about OKpin" : " عن OKpin"}
             </Link>
           </Box>
         </Grid>
@@ -343,7 +340,7 @@ const Footer = ({language}) => {
           md={3}
           sx={{
             order: { xs: 2, md: 4 },
-            textAlign: language ==="en"?  "left": "right"
+            textAlign: language === "en" ? "left" : "right",
           }}
         >
           <Typography
@@ -355,8 +352,7 @@ const Footer = ({language}) => {
               fontFamily: "Tajawal",
             }}
           >
-            {language ==="en"?  "Quick access links": "روابط الوصول السريع"}
-            
+            {language === "en" ? "Quick access links" : "روابط الوصول السريع"}
           </Typography>
           <Box>
             <Link
@@ -371,8 +367,7 @@ const Footer = ({language}) => {
                 fontFamily: "Tajawal",
               }}
             >
-              {language ==="en"? "Home": "الرئيسية"}
-              
+              {language === "en" ? "Home" : "الرئيسية"}
             </Link>
             <Link
               href="#"
@@ -386,8 +381,7 @@ const Footer = ({language}) => {
                 fontFamily: "Tajawal",
               }}
             >
-              {language ==="en"? "Why Us": "لماذا نحن"}
-              
+              {language === "en" ? "Why Us" : "لماذا نحن"}
             </Link>
             <Link
               href="#"
@@ -401,8 +395,9 @@ const Footer = ({language}) => {
                 fontFamily: "Tajawal",
               }}
             >
-               {language ==="en"? "Frequently Asked Questions FAQ": "الأسئلة الشائعة FAQ"}
-              
+              {language === "en"
+                ? "Frequently Asked Questions FAQ"
+                : "الأسئلة الشائعة FAQ"}
             </Link>
             <Link
               href="#"
@@ -417,9 +412,7 @@ const Footer = ({language}) => {
               }}
               onClick={handleOpenModal}
             >
-               {language ==="en"? "Dashboard": "لوحة التحكم"}
-
-          
+              {language === "en" ? "Dashboard" : "لوحة التحكم"}
             </Link>
             <ControlPanelModal
               isOpen={isModalOpen}
@@ -435,13 +428,13 @@ const Footer = ({language}) => {
         variant="body2"
         sx={{
           marginTop: "40px",
-          textAlign:language==="en"?"left":"right",
+          textAlign: language === "en" ? "left" : "right",
           fontSize: "14px",
-      
         }}
       >
-        {language === "en"?"All rights reserved © 2024 OKpin":"جميع الحقوق محفوظة © 2025 OKpin"}
-       
+        {language === "en"
+          ? "All rights reserved © 2024 OKpin"
+          : "جميع الحقوق محفوظة © 2025 OKpin"}
       </Typography>
     </Box>
   );
